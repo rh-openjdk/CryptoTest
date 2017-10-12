@@ -2,7 +2,7 @@
 Complete example of java crypto API
 
 This "test" is able to iterate through all algorithms (even aliases) which all java crypto providers provides.
-Every algorithm is initialised, and used. This is probably hugest collection of usages of java crypto api. I'm  afraid some of the apis were nto used in last 10 years anywhere else.
+Every algorithm is initialised, and used. This is probably hugest collection of usages of java crypto api. I'm  afraid some of the apis were nto used in last 10 years anywhere else (eg xml parts, as they have much more suitable wrappers in JDK).
 
 Current covered jdk is java8. With few exceptions it wil work in jdk9 to.
 The entry pooint is cryptotest.CryptoTest. You can lunch individual providers as main methods too.
