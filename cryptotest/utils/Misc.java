@@ -94,6 +94,10 @@ public class Misc {
         return seen + ")\t" + provider.getName() + ": \t" + service.getAlgorithm() + "~"
                 + callName + "\t (" + service.getType() + ")";
     }
+    
+    public static String getAgentHostName(){
+        return "agent.brq.redhat.com";
+    }
 
     public static File createTmpKrb5File() {
         File f = null;
@@ -117,8 +121,8 @@ public class Misc {
                     + "\n"
                     + "[realms]\n"
                     + "JCKTEST = {\n"
-                    + "kdc = agent.brq.redhat.com\n"
-                    + "admin_server = agent.brq.redhat.com\n"
+                    + "kdc = "+getAgentHostName()+"\n"
+                    + "admin_server = "+getAgentHostName()+"\n"
                     + "default_domain = JCKTEST\n"
                     + "}\n"
                     + "\n"

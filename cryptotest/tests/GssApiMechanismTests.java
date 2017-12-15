@@ -104,7 +104,7 @@ public class GssApiMechanismTests extends AlgorithmTest {
             //    WARNING: no policy specified for http/service.redhat.com@JCKTEST; defaulting to no policy
             //    Principal "http/service.redhat.com@JCKTEST" created.
             //System.setProperty("java.security.krb5.realm", "JCKTEST");
-            //System.setProperty("java.security.krb5.kdc", "agent.brq.redhat.com");
+            //System.setProperty("java.security.krb5.kdc", Misc.getAgentHostName());
             //setting the proeprties diable cross-realm authentication.
             //we must set krb5.cfg file
             File f = Misc.createTmpKrb5File();
