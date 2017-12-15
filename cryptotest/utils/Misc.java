@@ -96,7 +96,7 @@ public class Misc {
     }
     
     public static String getAgentHostName(){
-        return "agent.brq.redhat.com";
+        return "http-ftp-krb";
     }
 
     public static File createTmpKrb5File() {
