@@ -162,7 +162,7 @@ public class GssApiMechanismTests extends AlgorithmTest {
                                     found,
                                     GSSCredential.INITIATE_ONLY);
 
-                            GSSName serverName = instance.createName("http@service.redhat.com", GSSName.NT_HOSTBASED_SERVICE);
+                            GSSName serverName = instance.createName("http@service."+Misc.getAgentDomain(), GSSName.NT_HOSTBASED_SERVICE);
 
                             //finish(serverName); no longer needed, configfile do it for us
                             GSSContext context = instance.createContext(serverName,

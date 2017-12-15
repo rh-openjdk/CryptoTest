@@ -89,14 +89,18 @@ public class Misc {
 
     /*
     * geenrate name form counter, provider name, service name and service alias
-    */
+     */
     static String generateTitle(int seen, Provider provider, Provider.Service service, String callName) {
         return seen + ")\t" + provider.getName() + ": \t" + service.getAlgorithm() + "~"
                 + callName + "\t (" + service.getType() + ")";
     }
-    
-    public static String getAgentHostName(){
-        return "http-ftp-krb";
+
+    public static String getAgentHostName() {
+        return "agent." + getAgentDomain();
+    }
+
+    public static String getAgentDomain() {
+        return "redhat.com";
     }
 
     public static File createTmpKrb5File() {
@@ -121,13 +125,13 @@ public class Misc {
                     + "\n"
                     + "[realms]\n"
                     + "JCKTEST = {\n"
-                    + "kdc = "+getAgentHostName()+"\n"
-                    + "admin_server = "+getAgentHostName()+"\n"
+                    + "kdc = " + getAgentHostName() + "\n"
+                    + "admin_server = " + getAgentHostName() + "\n"
                     + "default_domain = JCKTEST\n"
                     + "}\n"
                     + "\n"
                     + "[domain_realm]\n"
-                    + ".redhat.com = JCKTEST\n"
+                    + "." + getAgentDomain() + " = JCKTEST\n"
                     + "\n"
                     + "[appdefaults]\n"
                     + "autologin = true\n"
