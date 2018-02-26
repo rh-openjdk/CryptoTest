@@ -96,7 +96,7 @@ public class Misc {
     }
 
     public static String getAgentHostName() {
-        return "agent." + getAgentDomain();
+        return "agent.brq." + getAgentDomain();
     }
 
     public static String getAgentDomain() {
