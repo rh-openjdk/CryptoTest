@@ -40,26 +40,6 @@ import cryptotest.utils.AlgorithmRunException;
 import cryptotest.utils.AlgorithmTest;
 import cryptotest.utils.Misc;
 import cryptotest.utils.TestResult;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Field;
-
-import java.security.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import javax.security.auth.Subject;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.kerberos.KerberosTicket;
-import javax.security.auth.login.AppConfigurationEntry;
-import javax.security.auth.login.Configuration;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
 import org.ietf.jgss.GSSContext;
 import org.ietf.jgss.GSSCredential;
 import org.ietf.jgss.GSSException;
@@ -71,6 +51,24 @@ import sun.security.jgss.krb5.Krb5NameElement;
 import sun.security.krb5.PrincipalName;
 import sun.security.krb5.Realm;
 import sun.security.krb5.RealmException;
+
+import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.kerberos.KerberosTicket;
+import javax.security.auth.login.LoginContext;
+import javax.security.auth.login.LoginException;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.security.Principal;
+import java.security.PrivilegedAction;
+import java.security.Provider;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /*
  * IwishThisCouldBeAtTest

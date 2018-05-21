@@ -119,7 +119,6 @@ public class Misc {
                     + "dns_lookup_realm = false\n"
                     + "dns_lookup_kdc = false\n"
                     + "ticket_lifetime = 24h\n"
-                    + "renew_lifetime = 7d\n"
                     + "forwardable = true\n"
                     + "allow_weak_crypto = true"
                     + "\n"
