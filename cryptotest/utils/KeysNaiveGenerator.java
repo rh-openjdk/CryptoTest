@@ -113,7 +113,16 @@ public class KeysNaiveGenerator {
 
     public static PrivateKey getDsaPrivateKey() throws NoSuchAlgorithmException {
         return getDsaKeyPair().getPrivate();
+    }
 
+    public static KeyPair getDsaKeyPair1024() throws NoSuchAlgorithmException {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
+        keyGen.initialize(1024);
+        return keyGen.genKeyPair();
+    }
+
+    public static PrivateKey getDsaPrivateKey1024() throws NoSuchAlgorithmException {
+        return getDsaKeyPair1024().getPrivate();
     }
 
     public static KeyPair getEcKeyPair() throws NoSuchAlgorithmException {

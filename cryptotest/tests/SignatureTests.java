@@ -41,6 +41,7 @@ import cryptotest.utils.AlgorithmTest;
 import static cryptotest.utils.KeysNaiveGenerator.getDsaPrivateKey;
 import static cryptotest.utils.KeysNaiveGenerator.getEcPrivateKey;
 import static cryptotest.utils.KeysNaiveGenerator.getRsaPrivateKey;
+import static cryptotest.utils.KeysNaiveGenerator.getDsaPrivateKey1024;
 import cryptotest.utils.TestResult;
 
 import java.security.*;
@@ -69,7 +70,19 @@ public class SignatureTests extends AlgorithmTest {
             if (service.getAlgorithm().contains("EC")) {
                 key = getEcPrivateKey();
             } else if (service.getAlgorithm().contains("DSA")) {
-                key = getDsaPrivateKey();
+                if (service.getAlgorithm().contains("SHA1")) {
+                    /* SHA1 is not sufficient for default DSA key size,
+                       throwing:
+                       java.security.InvalidKeyException: The security strength of SHA-1 digest algorithm is not sufficient for this key size
+
+                       See:
+                       https://bugs.java.com/view_bug.do?bug_id=8184341
+                       http://hg.openjdk.java.net/jdk8u/jdk8u-dev/jdk/file/8a97a690a0b3/src/share/classes/sun/security/provider/DSA.java#l104
+                    */
+                    key = getDsaPrivateKey1024();
+                } else {
+                    key = getDsaPrivateKey();
+                }
             }
             sig.initSign(key);
             //NONEwithDSA needs 20bytes
