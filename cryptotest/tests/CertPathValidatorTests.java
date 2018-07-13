@@ -17,7 +17,10 @@ import java.util.List;
  * The root certificate must be marked as a CA, which can be done by issuing this command:
  * keytool -genkeypair -alias <ALIAS> -keystore <KEYSTORE> -storepass <PASSWORD> -keypass <KEY_PASSWORD> -ext bc=ca:true
  * 
+ * ugh, see regenerateTestStoreChain1.sh
+ * 
  */
+
 public class CertPathValidatorTests extends AlgorithmTest {
 
     private KeyStore caStore;
@@ -44,7 +47,7 @@ public class CertPathValidatorTests extends AlgorithmTest {
             CertPath certPath = factory.generateCertPath(getCertificates());
             PKIXParameters certPathParams = new PKIXParameters(
                     Collections.
-                            singleton(new TrustAnchor((X509Certificate) caStore.getCertificate("companythatdoesnotexist"),
+                            singleton(new TrustAnchor((X509Certificate) caStore.getCertificate("root"),
                                     null))
             );
             //skip revocation status check, test otherwise fails
@@ -72,8 +75,8 @@ public class CertPathValidatorTests extends AlgorithmTest {
         //root certificate does not need to be added as the algorithm
         //can already determine whether this last intermediate cert has been
         //signed by a root CA or not
-        result.add((X509Certificate) caStore.getCertificate("thirdcompany"));
-        result.add((X509Certificate) caStore.getCertificate("intermediatecompanycertificate"));
+        result.add((X509Certificate) caStore.getCertificate("server")); //order is important
+        result.add((X509Certificate) caStore.getCertificate("ca"));
         return result;
     }
 }
