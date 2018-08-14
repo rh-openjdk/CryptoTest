@@ -18,6 +18,15 @@ In jdk9, you need to add minimu of:
   *  rm ./cryptotest/tests/KeyInfoFactoryTests.java  
  Can be fixed, and I was just lazy.  
  
+ With jdk10, this goes more far:
+ ```
+ /usr/lib/jvm/java-10-openjdk/bin/javac  --add-modules java.security.jgss --add-exports java.security.jgss/sun.security.jgss=ALL-UNNAMED --add-exports java.security.jgss/sun.security.jgss.krb5=ALL-UNNAMED --add-exports java.security.jgss/sun.security.krb5=ALL-UNNAMED \
+--add-exports java.base/sun.security.ssl=ALL-UNNAMED \
+--add-exports java.base/sun.security.internal.spec=ALL-UNNAMED \
+--add-exports java.base/com.sun.crypto.provider=ALL-UNNAMED \
+ -d $d  cryptotest/*.java cryptotest/utils/*.java cryptotest/tests/GssApiMechanismTests.java 
+ ```
+ 
  This project would never be created without extensive help of
   *  sparkoo@github
   *  oklinov@github
