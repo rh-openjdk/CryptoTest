@@ -35,9 +35,7 @@
  */
 package cryptotest.utils;
 
-import com.sun.crypto.provider.TlsKeyMaterialGenerator;
-import com.sun.crypto.provider.TlsMasterSecretGenerator;
-import com.sun.crypto.provider.TlsRsaPremasterSecretGenerator;
+import java.lang.reflect.Field;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
 import java.security.KeyPair;
@@ -51,7 +49,6 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import sun.security.internal.spec.TlsRsaPremasterSecretParameterSpec;
-import sun.security.ssl.ProtocolVersion;
 
 public class KeysNaiveGenerator {
 
@@ -70,10 +67,33 @@ public class KeysNaiveGenerator {
 
     }
 
-    public static SecretKey getTlsRsaPremasterSecret(ProtocolVersion version) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+    public static SecretKey getTlsRsaPremasterSecret(int major, int minor) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
         KeyGenerator kg = KeyGenerator.getInstance("SunTlsRsaPremasterSecret");
-        kg.init(new TlsRsaPremasterSecretParameterSpec(version.major, version.minor));
+        kg.init(new TlsRsaPremasterSecretParameterSpec(major, minor));
         return kg.generateKey();
+    }
+
+    public static SecretKey getTlsRsaPremasterSecretProtocolVersion(/*private since jdk11 ProtocolVersion*/Object version) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+        KeyGenerator kg = KeyGenerator.getInstance("SunTlsRsaPremasterSecret");
+        int major = getIntValueFromHiddenObjectCatched(version, "major");
+        int minor = getIntValueFromHiddenObjectCatched(version, "minor");
+        kg.init(new TlsRsaPremasterSecretParameterSpec(major, minor));
+        return kg.generateKey();
+    }
+
+    private static int getIntValueFromHiddenObjectCatched(Object version, String field) throws RuntimeException {
+        try {
+            return getIntValueFromHiddenObject(version, field);
+        } catch (IllegalArgumentException | NoSuchFieldException | IllegalAccessException | SecurityException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    private static int getIntValueFromHiddenObject(Object version, String field) throws IllegalArgumentException, NoSuchFieldException, IllegalAccessException, SecurityException {
+        Field major = version.getClass().getDeclaredField(field);
+        major.setAccessible(true);
+        int majorValue = (int) major.get(version);
+        return majorValue;
     }
 
     public static SecretKey getPbeKey() throws NoSuchAlgorithmException, InvalidKeySpecException {

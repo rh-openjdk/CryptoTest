@@ -48,7 +48,6 @@ import sun.security.internal.spec.TlsKeyMaterialParameterSpec;
 import sun.security.internal.spec.TlsMasterSecretParameterSpec;
 import sun.security.internal.spec.TlsPrfParameterSpec;
 import sun.security.internal.spec.TlsRsaPremasterSecretParameterSpec;
-import sun.security.ssl.ProtocolVersion;
 
 /*
  * IwishThisCouldBeAtTest
@@ -83,11 +82,11 @@ public class KeyGeneratorTests extends AlgorithmTest {
             //fixme replace all deprecated calls by correct instantiations
             //fixme repalce hardcoded versions by iterating over all version (can be hard by various versions not supported in various impls)
             if (service.getAlgorithm().contains("TlsPrf") || service.getAlgorithm().contains("Tls12Prf")) {
-                SecretKey key = KeysNaiveGenerator.getTlsRsaPremasterSecret(ProtocolVersion.valueOf(P_MAJ, P_MIN));
+                SecretKey key = KeysNaiveGenerator.getTlsRsaPremasterSecret(P_MAJ, P_MIN);
                 TlsPrfParameterSpec params = new TlsPrfParameterSpec(key, "SomeLabel", new byte[]{1, 2, 3}, 10, "sha1", 20, 64);
                 kg.init(params);
             } else if (service.getAlgorithm().contains("TlsMasterSecret")) {
-                SecretKey key = KeysNaiveGenerator.getTlsRsaPremasterSecret(ProtocolVersion.valueOf(P_MAJ, P_MIN));
+                SecretKey key = KeysNaiveGenerator.getTlsRsaPremasterSecret(P_MAJ, P_MIN);
                 TlsMasterSecretParameterSpec params = new TlsMasterSecretParameterSpec(key, P_MAJ, P_MIN, new byte[]{1, 2, 3}, new byte[]{1, 2, 3}, "sha1", 16, 64);
                 kg.init(params);
             } else if (service.getAlgorithm().contains("TlsKeyMaterial")) {
