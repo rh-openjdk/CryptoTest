@@ -30,6 +30,12 @@ public class KeyPairGeneratorTests extends AlgorithmTest {
             int keySize = 512;
             if (service.getAlgorithm().contains("EC")) {
                 keySize = 256;
+            } else if (service.getAlgorithm().contains("XDH") || service.getAlgorithm().contains("X25519")){
+                // https://docs.oracle.com/en/java/javase/11/security/oracle-providers.html#GUID-B1F2B3F3-F2A4-4FF5-8887-3B3335343B2A
+                keySize = 255;
+            } else if (service.getAlgorithm().contains("X448")){
+                // https://docs.oracle.com/en/java/javase/11/security/oracle-providers.html#GUID-B1F2B3F3-F2A4-4FF5-8887-3B3335343B2A
+                keySize = 448;
             }
             keyPairGenerator.initialize(keySize, random);
             KeyPair pair = keyPairGenerator.genKeyPair();

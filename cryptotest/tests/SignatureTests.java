@@ -45,6 +45,7 @@ import static cryptotest.utils.KeysNaiveGenerator.getDsaPrivateKey1024;
 import cryptotest.utils.TestResult;
 
 import java.security.*;
+import java.security.spec.PSSParameterSpec;
 
 /*
  * IwishThisCouldBeAtTest
@@ -83,6 +84,11 @@ public class SignatureTests extends AlgorithmTest {
                 } else {
                     key = getDsaPrivateKey();
                 }
+            } else if (service.getAlgorithm().contains("RSASSA-PSS")){
+                KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSASSA-PSS");
+                KeyPair kp = kpg.generateKeyPair();
+                key = kp.getPrivate();
+                sig.setParameter(new PSSParameterSpec(10));
             }
             sig.initSign(key);
             //NONEwithDSA needs 20bytes
@@ -93,7 +99,8 @@ public class SignatureTests extends AlgorithmTest {
             AlgorithmTest.printResult(res);
         } catch (NoSuchAlgorithmException ex) {
             throw new AlgorithmInstantiationException(ex);
-        } catch (InvalidKeyException | UnsupportedOperationException | InvalidParameterException | SignatureException | ProviderException ex) {
+        } catch (InvalidKeyException | UnsupportedOperationException | InvalidParameterException | SignatureException |
+                InvalidAlgorithmParameterException | ProviderException ex) {
             throw new AlgorithmRunException(ex);
         }
 
