@@ -41,11 +41,10 @@ import cryptotest.utils.AlgorithmRunException;
 import cryptotest.utils.AlgorithmTest;
 import cryptotest.utils.TestResult;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
 import java.security.*;
+import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
 import java.util.Map;
@@ -116,6 +115,10 @@ public class CipherTests extends AlgorithmTest {
             } else if (service.getAlgorithm().contains("ARCFOUR")) {
                 b = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
                 key = getArcFourKey();
+            } else if (service.getAlgorithm().contains("ChaCha20")) {
+                AlgorithmParameterSpec params = new IvParameterSpec(new byte[]{1,2,3,4,5,6,7,8,9,10,11,12});
+                KeyGenerator.getInstance("ChaCha20").init(params);
+                key = KeyGenerator.getInstance("ChaCha20").generateKey();
             }
 
             if (service.getAlgorithm().toLowerCase().contains("wrap")) {
@@ -130,7 +133,7 @@ public class CipherTests extends AlgorithmTest {
                     }
                 }
             }
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeySpecException ex) {
+        } catch(NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException| InvalidKeySpecException ex){
             throw new AlgorithmInstantiationException(ex);
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException |
                 UnsupportedOperationException | InvalidParameterException | ProviderException ex) {

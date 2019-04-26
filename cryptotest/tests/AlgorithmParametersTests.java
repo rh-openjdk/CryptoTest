@@ -43,11 +43,7 @@ import cryptotest.utils.TestResult;
 import java.security.*;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.spec.AlgorithmParameterSpec;
-import java.security.spec.DSAParameterSpec;
-import java.security.spec.ECGenParameterSpec;
-import java.security.spec.InvalidParameterSpecException;
-import java.security.spec.MGF1ParameterSpec;
+import java.security.spec.*;
 import javax.crypto.spec.DHParameterSpec;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
@@ -77,6 +73,8 @@ public class AlgorithmParametersTests extends AlgorithmTest {
             //order important!
             if (service.getAlgorithm().contains("DSA")) {
                 params = new DSAParameterSpec(BigInteger.ONE, BigInteger.ONE, BigInteger.ONE);
+            } else if (service.getAlgorithm().contains("RSASSA")) {
+                params = new PSSParameterSpec(10);
             } else if (service.getAlgorithm().contains("PBES2")) {
                 //it looks like bug, PBES2 in its internal except name like PBES2WithHmacSHAxyzAES_abc
                 params = new PBEParameterSpec(new byte[]{1, 2, 3, 4}, 10);
@@ -106,6 +104,9 @@ public class AlgorithmParametersTests extends AlgorithmTest {
                 params = new OAEPParameterSpec("sha1", "MGF1", new MGF1ParameterSpec("sha1"), new PSource.PSpecified(new byte[]{1, 2, 3}));
             } else if (service.getAlgorithm().contains("EC")) {
                 params = new ECGenParameterSpec("1.2.840.10045.3.1.7");
+            } else if (service.getAlgorithm().contains("ChaCha20")){
+                // must be 12 bytes long
+                params = new IvParameterSpec(new byte[]{1,2,3,4,5,6,7,8,9,10,11,12});
             }
 
             c.init(params);

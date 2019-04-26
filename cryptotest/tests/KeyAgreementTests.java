@@ -4,14 +4,12 @@ import cryptotest.utils.AlgorithmInstantiationException;
 import cryptotest.utils.AlgorithmRunException;
 import cryptotest.utils.AlgorithmTest;
 import cryptotest.utils.TestResult;
-import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
+
+import java.security.*;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import javax.crypto.KeyAgreement;
 import com.sun.crypto.provider.DHKeyPairGenerator;
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import sun.security.ec.ECKeyPairGenerator;
 
 public class KeyAgreementTests extends AlgorithmTest {
@@ -32,7 +30,17 @@ public class KeyAgreementTests extends AlgorithmTest {
             if ("ECDH".equals(alias)) {
                 keypair = new ECKeyPairGenerator().generateKeyPair();
                 
-            } else {
+            } else if (service.getAlgorithm().startsWith("XDH")){
+                KeyPairGenerator kpg = KeyPairGenerator.getInstance("XDH");
+                keypair = kpg.generateKeyPair();
+            } else if (service.getAlgorithm().startsWith("X25519")){
+                KeyPairGenerator kpg = KeyPairGenerator.getInstance("X25519");
+                keypair = kpg.generateKeyPair();
+            } else if (service.getAlgorithm().contains("X448")) {
+                KeyPairGenerator kpg = KeyPairGenerator.getInstance("X448");
+                keypair = kpg.generateKeyPair();
+            }
+            else {
                 keypair = new DHKeyPairGenerator().generateKeyPair();
             }
             PrivateKey pk = keypair.getPrivate();
