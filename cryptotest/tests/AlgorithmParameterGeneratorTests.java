@@ -38,7 +38,8 @@ public class AlgorithmParameterGeneratorTests extends AlgorithmTest {
             AlgorithmParameters algparams = ap.generateParameters();
             AlgorithmParameterSpec specparam;
             AlgorithmParameterGenerator ap2 = AlgorithmParameterGenerator.getInstance(alias, service.getProvider());
-            if ("DSA".equals(alias)) {
+            // use service.getAlgorithm rather then alias, since for some DSA, there are more aliases e.g. 1.2.840.10040.4.1
+            if ("DSA".equals(service.getAlgorithm())) {
                 specparam = new DSAGenParameterSpec(1024, 160);
             } else {
                 specparam = new DHGenParameterSpec(512, 12);

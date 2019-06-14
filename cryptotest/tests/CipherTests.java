@@ -43,6 +43,8 @@ import cryptotest.utils.TestResult;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.security.*;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidKeySpecException;
@@ -88,6 +90,7 @@ public class CipherTests extends AlgorithmTest {
                 b = new byte[]{1, 2, 3};
             }
             Key key = null;
+            AlgorithmParameterSpec initSpec = null;
             if (service.getAlgorithm().contains("RSA")) {
                 key = getRsaPrivateKey();
             } else if (service.getAlgorithm().contains("PBE")) {
@@ -115,13 +118,27 @@ public class CipherTests extends AlgorithmTest {
             } else if (service.getAlgorithm().contains("ARCFOUR")) {
                 b = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
                 key = getArcFourKey();
+            } else if (service.getAlgorithm().contains("ChaCha20-Poly1305")) {
+                KeyGenerator kg = KeyGenerator.getInstance("ChaCha20");
+                b = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+                initSpec = new IvParameterSpec(b);
+                kg.init(256);
+                key = KeyGenerator.getInstance("ChaCha20").generateKey();
+
             } else if (service.getAlgorithm().contains("ChaCha20")) {
-                AlgorithmParameterSpec params = new IvParameterSpec(new byte[]{1,2,3,4,5,6,7,8,9,10,11,12});
-                KeyGenerator.getInstance("ChaCha20").init(params);
+                KeyGenerator kg = KeyGenerator.getInstance("ChaCha20");
+                b = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+                // use reflect api, jdk 8 does not have this class
+                Class<?> chacha = Class.forName("javax.crypto.spec.ChaCha20ParameterSpec");
+                Constructor chachaConstr = chacha.getConstructor(byte[].class, int.class);
+                initSpec = (AlgorithmParameterSpec) chachaConstr.newInstance(b, 10);
+                kg.init(256);
                 key = KeyGenerator.getInstance("ChaCha20").generateKey();
             }
-
-            if (service.getAlgorithm().toLowerCase().contains("wrap")) {
+            if (initSpec != null){
+                c.init(Cipher.ENCRYPT_MODE, key, initSpec);
+            }
+            else if (service.getAlgorithm().toLowerCase().contains("wrap")) {
                 c.init(Cipher.WRAP_MODE, key);
                 AlgorithmTest.printResult(c.wrap(key));
             } else {
@@ -133,7 +150,7 @@ public class CipherTests extends AlgorithmTest {
                     }
                 }
             }
-        } catch(NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException| InvalidKeySpecException ex){
+        } catch(NoSuchAlgorithmException | ClassNotFoundException | NoSuchMethodException | NoSuchPaddingException | InvalidKeySpecException | InvalidAlgorithmParameterException | InstantiationException | IllegalAccessException | InvocationTargetException ex){
             throw new AlgorithmInstantiationException(ex);
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException |
                 UnsupportedOperationException | InvalidParameterException | ProviderException ex) {

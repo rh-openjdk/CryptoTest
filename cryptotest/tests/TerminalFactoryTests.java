@@ -5,19 +5,19 @@
  */
 package cryptotest.tests;
 
-import cryptotest.utils.AlgorithmInstantiationException;
 import cryptotest.utils.AlgorithmRunException;
 import cryptotest.utils.AlgorithmTest;
 import cryptotest.utils.TestResult;
-import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminals;
 import javax.smartcardio.TerminalFactory;
 
 /**
- *
- * @author Zdeněk Žamberský
+ * This test was supposed to test PCSC Terminal factory. Unfortunately, it can't be inicialized with PCSC provider as
+ * usual for some reason, we are initing it with default method (that uses PCSC provider anyways).
+ * However, this testcase no longer serves its purpose, if other providers appear.
+ * @author Zdeněk Žamberský, Petra Mikova
  */
 public class TerminalFactoryTests extends AlgorithmTest {
 
@@ -32,12 +32,10 @@ public class TerminalFactoryTests extends AlgorithmTest {
     }
 
     @Override
-    protected void checkAlgorithm(Provider.Service service, String alias) throws
-            AlgorithmInstantiationException, AlgorithmRunException {
-        try {
+    protected void checkAlgorithm(Provider.Service service, String alias) throws AlgorithmRunException {
             TerminalFactory tc
                     = TerminalFactory
-                            .getInstance(alias, null, service.getProvider());
+                            .getDefault();
             CardTerminals terminals = tc.terminals();
             try {
                 terminals.list();
@@ -53,10 +51,8 @@ public class TerminalFactoryTests extends AlgorithmTest {
                 }
                 
             }
-        } catch (NoSuchAlgorithmException ex) {
-            throw new AlgorithmInstantiationException(ex);
         }
-    }
+
 
     @Override
     public String getTestedPart() {
