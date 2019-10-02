@@ -49,6 +49,7 @@ public abstract class AlgorithmTest {
 
     private List<Exception> failedInits = new ArrayList<>();
     private List<Exception> failedRuns = new ArrayList<>();
+    private List<Exception> errorRuns = new ArrayList<>();
     private int algorithmsSeen = 0;
     private int testsCount = 0;
     private boolean run;
@@ -107,12 +108,21 @@ public abstract class AlgorithmTest {
                             System.err.println(title);
                             ex.printStackTrace();
                         }
+                    } catch (Exception ex) {
+                        errorRuns.add(new Exception(title, ex));
+                        System.out.println(ex);
+                        System.out.println("Error: " + service.getAlgorithm() + " from " + provider);
+                        System.out.println("Error");
+                        if (Settings.VerbositySettings.printStacks) {
+                            System.err.println(title);
+                            ex.printStackTrace();
+                        }
                     }
                 }
 
             }
         }
-        int failed = (failedInits.size() + failedRuns.size());
+        int failed = (failedInits.size() + failedRuns.size() + errorRuns.size());
         TestResult.AlgorithmTestResult r;
         if (failed == 0) {
             r = TestResult.AlgorithmTestResult.pass("All " + getTestedPart() + " passed", this.getClass(), testsCount, algorithmsSeen);
@@ -127,6 +137,12 @@ public abstract class AlgorithmTest {
             }
             expl = expl + "** failed inits: " + failedInits.size() + " **\n";
             for (Exception ex : failedInits) {
+                StringWriter stack = new StringWriter();
+                ex.printStackTrace(new PrintWriter(stack));
+                expl += stack.toString();
+            }
+            expl = expl + "** error runs: " + errorRuns.size() + " **\n";
+            for (Exception ex : errorRuns) {
                 StringWriter stack = new StringWriter();
                 ex.printStackTrace(new PrintWriter(stack));
                 expl += stack.toString();
