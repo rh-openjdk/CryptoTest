@@ -42,7 +42,7 @@ public class KeyInfoFactoryTests extends AlgorithmTest {
             RetrievalMethod retrievalMethod = keyInfoFactory.newRetrievalMethod("bbb");
             KeyValue keyValue = null;
             try {
-                keyValue = keyInfoFactory.newKeyValue(KeysNaiveGenerator.getRsaKeyPair().getPublic());
+                keyValue = keyInfoFactory.newKeyValue(KeysNaiveGenerator.getRsaKeyPair(service.getProvider()).getPublic());
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }

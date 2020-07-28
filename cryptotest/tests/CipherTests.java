@@ -58,14 +58,6 @@ import static cryptotest.utils.KeysNaiveGenerator.*;
  */
 public class CipherTests extends AlgorithmTest {
 
-    private static final Map<String, Byte> blockLengthMap;
-
-    static {
-        blockLengthMap = new HashMap<>();
-        blockLengthMap.put("DES", (byte) 8);
-        blockLengthMap.put("DESede", (byte) 8);
-    }
-
     /**
      * @param args the command line arguments
      */
@@ -81,43 +73,33 @@ public class CipherTests extends AlgorithmTest {
             AlgorithmInstantiationException, AlgorithmRunException {
         try {
             Cipher c = Cipher.getInstance(alias, service.getProvider());
-            byte[] b;
-            if (isPadding(service.getAlgorithm()) || isPadding(alias)) {
-                // If we use no padding, input length has to be equal to the
-                // cipher block length.
-                b = generateBlock(getPaddingLength(service.getAlgorithm(), alias));
-            } else {
-                b = new byte[]{1, 2, 3};
-            }
+            int blockSize = c.getBlockSize();
+            byte[] b = generateBlock(blockSize > 0 ? blockSize : 16);
+
             Key key = null;
             AlgorithmParameterSpec initSpec = null;
             if (service.getAlgorithm().contains("RSA")) {
-                key = getRsaPrivateKey();
+                key = getRsaPrivateKey(service.getProvider());
             } else if (service.getAlgorithm().contains("PBE")) {
                 key = getPbeKey();
             } else if (service.getAlgorithm().contains("DESede")) {
-                key = getDesedeKey();
+                key = getDesedeKey(service.getProvider());
             } else if (service.getAlgorithm().contains("DES")) {
-                key = getDesKey();
+                key = getDesKey(service.getProvider());
             } else if (service.getAlgorithm().contains("Blowfish")) {
-                key = getBlowfishKey();
+                key = getBlowfishKey(service.getProvider());
             } else if (service.getAlgorithm().contains("AES_192")
                     || service.getAlgorithm().contains("AESWrap_192")) {
-                b = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-                key = getAesKey192();
+                key = getAesKey192(service.getProvider());
             } else if (service.getAlgorithm().contains("AES_256")
                     || service.getAlgorithm().contains("AESWrap_256")) {
-                b = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-                key = getAesKey256();
+                key = getAesKey256(service.getProvider());
             } else if (service.getAlgorithm().contains("AES")) {
-                b = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-                key = getAesKey();
+                key = getAesKey(service.getProvider());
             } else if (service.getAlgorithm().contains("RC2")) {
-                b = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
                 key = getRc2Key();
             } else if (service.getAlgorithm().contains("ARCFOUR")) {
-                b = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-                key = getArcFourKey();
+                key = getArcFourKey(service.getProvider());
             } else if (service.getAlgorithm().contains("ChaCha20-Poly1305")) {
                 KeyGenerator kg = KeyGenerator.getInstance("ChaCha20");
                 b = new byte[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
@@ -143,14 +125,9 @@ public class CipherTests extends AlgorithmTest {
                 AlgorithmTest.printResult(c.wrap(key));
             } else {
                 c.init(Cipher.ENCRYPT_MODE, key);
-                if (!isNss(service.getProvider(), service) || Settings.runNss) {
-                    AlgorithmTest.printResult(c.doFinal(b));
-                    if (!service.getAlgorithm().contains("AES")) {
-                        AlgorithmTest.printResult(c.doFinal());
-                    }
-                }
+                AlgorithmTest.printResult(c.doFinal(b));
             }
-        } catch(NoSuchAlgorithmException | ClassNotFoundException | NoSuchMethodException | NoSuchPaddingException | InvalidKeySpecException | InvalidAlgorithmParameterException | InstantiationException | IllegalAccessException | InvocationTargetException ex){
+        } catch(NoSuchAlgorithmException | ClassNotFoundException | NoSuchMethodException | NoSuchPaddingException | InvalidKeySpecException | InvalidAlgorithmParameterException | InstantiationException | IllegalAccessException | InvocationTargetException | NullPointerException ex){
             throw new AlgorithmInstantiationException(ex);
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException |
                 UnsupportedOperationException | InvalidParameterException | ProviderException ex) {
@@ -164,55 +141,12 @@ public class CipherTests extends AlgorithmTest {
         return "Cipher";
     }
 
-    private boolean isNss(Provider provider, Provider.Service service) {
-        //ignoring some broken nssnss:
-        return provider.getName().endsWith("-NSS")
-                && (service.getAlgorithm().equals("DESede/CBC/NoPadding")
-                || service.getAlgorithm().equals("DESede/CBC/PKCS5Padding")
-                || service.getAlgorithm().equals("DESede/ECB/NoPadding")
-                || service.getAlgorithm().equals("DESede/ECB/PKCS5Padding")
-                || service.getAlgorithm().equals("DES/ECB/NoPadding")
-                || service.getAlgorithm().equals("DES/ECB/PKCS5Padding")
-                || service.getAlgorithm().equals("DES/CBC/NoPadding")
-                || service.getAlgorithm().equals("AES/CBC/PKCS5Padding")
-                || service.getAlgorithm().equals("AES/CBC/NoPadding")
-                || service.getAlgorithm().equals("DES/CBC/PKCS5Padding")
-                || service.getAlgorithm().equals("AES/CTR/NoPadding")
-                || service.getAlgorithm().equals("AES_128/ECB/NoPadding")
-                || service.getAlgorithm().equals("AES_192/ECB/NoPadding")
-                || service.getAlgorithm().equals("AES_256/CBC/NoPadding"));
-    }
-
-    private static byte[] generateBlock(byte blockLength) {
+    private static byte[] generateBlock(int blockLength) {
         byte[] block = new byte[blockLength];
-        for (byte i = 0; i < blockLength; i++) {
+        for (int i = 0; i < blockLength; i++) {
             //block[i] = i + 1;
             block[i] = 1;
         }
         return block;
     }
-
-    private byte getPaddingLength(String name, String alias) {
-        String[] aliasComponents = splitNssName(name);
-        Byte b = blockLengthMap.get(aliasComponents[0]);
-        if (b == null) {
-            aliasComponents = splitNssName(alias);
-            b = blockLengthMap.get(aliasComponents[0]);
-
-        }
-        return b;
-
-    }
-
-    private boolean isPadding(String s) {
-        final String[] aliasComponents = splitNssName(s);
-        return (aliasComponents.length == 3
-                && blockLengthMap.containsKey(aliasComponents[0])
-                && aliasComponents[2].equals("NoPadding"));
-    }
-
-    private String[] splitNssName(String s) {
-        return s.split("/");
-    }
-
 }

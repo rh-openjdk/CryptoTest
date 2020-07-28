@@ -35,39 +35,39 @@ public class KeyFactoryTests extends AlgorithmTest {
             KeySpec publicKeySpec;
 
             if (service.getAlgorithm().contains("DSA")) {
-                KeyPair kp = KeysNaiveGenerator.getDsaKeyPair();
+                KeyPair kp = KeysNaiveGenerator.getDsaKeyPair(service.getProvider());
                 privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), DSAPrivateKeySpec.class);
                 publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), DSAPublicKeySpec.class);
             }else if (service.getAlgorithm().contains("RSASSA-PSS")) {
-                KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSASSA-PSS");
+                KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSASSA-PSS", service.getProvider());
                 KeyPair kp = kpg.generateKeyPair();
                 privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), RSAPrivateKeySpec.class);
                 publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), RSAPublicKeySpec.class);
 
             } else if (service.getAlgorithm().contains("X25519")) {
-                KeyPairGenerator kpg = KeyPairGenerator.getInstance("X25519");
+                KeyPairGenerator kpg = KeyPairGenerator.getInstance("X25519", service.getProvider());
                 KeyPair kp = kpg.generateKeyPair();
                 privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), PKCS8EncodedKeySpec.class);
                 publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), X509EncodedKeySpec.class);
 
             } else if (service.getAlgorithm().contains("X448")) {
-                KeyPairGenerator kpg = KeyPairGenerator.getInstance("X448");
+                KeyPairGenerator kpg = KeyPairGenerator.getInstance("X448", service.getProvider());
                 KeyPair kp = kpg.generateKeyPair();
                 privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), PKCS8EncodedKeySpec.class);
                 publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), X509EncodedKeySpec.class);
 
             } else if (service.getAlgorithm().contains("XDH")) {
-                KeyPairGenerator kpg = KeyPairGenerator.getInstance("XDH");
+                KeyPairGenerator kpg = KeyPairGenerator.getInstance("XDH", service.getProvider());
                 KeyPair kp = kpg.generateKeyPair();
                 privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), PKCS8EncodedKeySpec.class);
                 publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), X509EncodedKeySpec.class);
 
             } else if (service.getAlgorithm().contains("RSA")) {
-                KeyPair kp = KeysNaiveGenerator.getRsaKeyPair();
+                KeyPair kp = KeysNaiveGenerator.getRsaKeyPair(service.getProvider());
                 privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), RSAPrivateKeySpec.class);
                 publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), RSAPublicKeySpec.class);
             } else if (service.getAlgorithm().contains("EC")) {
-                KeyPair keyPair = KeyPairGenerator.getInstance("EC").genKeyPair();
+                KeyPair keyPair = KeyPairGenerator.getInstance("EC", service.getProvider()).genKeyPair();
                 ECPrivateKey ecPrivateKey = ((ECPrivateKey) keyPair.getPrivate());
                 ECPublicKey ecPublicKey = ((ECPublicKey) keyPair.getPublic());
                 privateKeySpec = new ECPrivateKeySpec(ONE, ecPrivateKey.getParams());

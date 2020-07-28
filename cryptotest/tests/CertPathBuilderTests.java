@@ -45,13 +45,13 @@ public class CertPathBuilderTests extends AlgorithmTest {
 
             KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
             ks.load(null, new char[]{104, 111, 118, 110, 111});
-            ks.setCertificateEntry("bbb", new DummyCertificate());
+            ks.setCertificateEntry("bbb", new DummyCertificate(service.getProvider()));
 
-            CertStore cs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(Arrays.asList(new DummyCertificate(), new DummyCertificate())));
+            CertStore cs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(Arrays.asList(new DummyCertificate(service.getProvider()), new DummyCertificate(service.getProvider()))));
 
 
             Set<TrustAnchor> trustAnchors = new HashSet<>();
-            trustAnchors.add(new TrustAnchor(new DummyCertificate(), null));
+            trustAnchors.add(new TrustAnchor(new DummyCertificate(service.getProvider()), null));
 
             PKIXBuilderParameters params = new PKIXBuilderParameters(ks, new X509CertSelector() {
                 @Override
@@ -72,9 +72,11 @@ public class CertPathBuilderTests extends AlgorithmTest {
 
     private static class DummyCertificate extends X509CertImpl {
 
-        private final KeyPair keyPair = KeysNaiveGenerator.getRsaKeyPair();
+        private final KeyPair keyPair;
 
-        private DummyCertificate() throws NoSuchAlgorithmException {}
+        private DummyCertificate(Provider provider) throws NoSuchAlgorithmException {
+            keyPair = KeysNaiveGenerator.getRsaKeyPair(provider);
+        }
 
         @Override
         public PublicKey getPublicKey() {
