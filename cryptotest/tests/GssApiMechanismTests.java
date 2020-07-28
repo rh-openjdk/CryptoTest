@@ -35,6 +35,7 @@
  */
 package cryptotest.tests;
 
+import cryptotest.Settings;
 import cryptotest.utils.AlgorithmInstantiationException;
 import cryptotest.utils.AlgorithmRunException;
 import cryptotest.utils.AlgorithmTest;
@@ -88,6 +89,9 @@ public class GssApiMechanismTests extends AlgorithmTest {
 
     @Override
     protected void checkAlgorithm(final Provider.Service service, final String alias) throws AlgorithmInstantiationException, AlgorithmRunException {
+        if (Settings.skipAgentTests) {
+            return;
+        }
         try {
             if (debug) {
                 System.setProperty("sun.security.jgss.debug", "true");

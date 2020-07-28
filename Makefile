@@ -10,6 +10,8 @@ JAVAC_MOD_ARGS := $(shell [ $(JAVA_VERSION_MAJOR) -le 8 ] && printf '%s' '-XDign
 # to allow exclude tests for some jdk
 TESTS_EXCLUDE := $(shell printf '%s' ".*[.]sh" ;  )
 
+SKIP_AGENT_TESTS_ARG := $(shell [ 1 = "$(SKIP_AGENT_TESTS)" ] && printf '%s' '-Dcryptotests.skipAgentTests=1' )
+
 .PHONY: clean CryptoTest all
 
 all: CryptoTest
@@ -23,6 +25,6 @@ classes:
 	cp cryptotest/tests/test.jks classes/cryptotest/tests
 
 CryptoTest: | classes
-	$(JAVA) $(JAVA_MOD_ARGS) -cp classes cryptotest.CryptoTest
+	$(JAVA) $(JAVA_MOD_ARGS) -cp classes $(SKIP_AGENT_TESTS_ARG) cryptotest.CryptoTest
 
 # todo: targets for individual testsuits

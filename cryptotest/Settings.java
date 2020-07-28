@@ -38,6 +38,20 @@ package cryptotest;
 
 public class Settings {
 
+    private static boolean getBooleanProperty(String name, boolean defaultValue) {
+        String val = System.getProperty(name);
+        if (val != null) {
+            String valLow = val.toLowerCase();
+            if (valLow.equals("1") || valLow.equals("true")) {
+                return true;
+            } else if (valLow.equals("0") || valLow.equals("false")) {
+                return false;
+            }
+        }
+        return defaultValue;
+    }
+
+    public static boolean skipAgentTests = getBooleanProperty("cryptotests.skipAgentTests", false);
     //not only names of algorithms will be invoked, but also all aliases. Number of tests multiply by aprox 3, but right thing to do
     public static boolean testAliases = true;
     // all mechanisms ar enot only initiated, but also used, nss have some issues right now

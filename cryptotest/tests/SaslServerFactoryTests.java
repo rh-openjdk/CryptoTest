@@ -1,5 +1,6 @@
 package cryptotest.tests;
 
+import cryptotest.Settings;
 import cryptotest.utils.AlgorithmInstantiationException;
 import cryptotest.utils.AlgorithmRunException;
 import cryptotest.utils.AlgorithmTest;
@@ -55,6 +56,9 @@ public class SaslServerFactoryTests extends AlgorithmTest {
                             String.format("server null, provider '%s' and alias '%s'", service.getAlgorithm(), alias)));
                 }
             } else {
+                if (Settings.skipAgentTests) {
+                    return;
+                }
                 if (debug) {
                     System.setProperty("sun.security.jgss.debug", "true");
                     System.setProperty("sun.security.krb5.debug", "true");
