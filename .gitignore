@@ -23,3 +23,6 @@ hs_err_pid*
 
 .idea/
 *.iml
+
+# Directory with compiled classes made by Makefile
+classes
