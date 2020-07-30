@@ -39,11 +39,11 @@ import cryptotest.utils.AlgorithmInstantiationException;
 import cryptotest.utils.AlgorithmRunException;
 import cryptotest.utils.AlgorithmTest;
 import cryptotest.utils.KeysNaiveGenerator;
-import static cryptotest.utils.KeysNaiveGenerator.getBlowfishKey;
 import cryptotest.utils.TestResult;
 
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
+import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 import javax.crypto.spec.PBEParameterSpec;
 
@@ -75,7 +75,15 @@ public class MacTests extends AlgorithmTest {
                 PBEParameterSpec parmas = new PBEParameterSpec(new byte[]{1, 2, 3, 4, 5, 6, 7, 8}, 5);
                 md.init(key, parmas);
             } else {
-                Key key = getBlowfishKey();
+                KeyGenerator kg;
+                try {
+                    kg = KeysNaiveGenerator.getKeyGenerator(service.getAlgorithm(), service.getProvider());
+                } catch (NoSuchAlgorithmException e) {
+                    // No KeyGenerator, which could generate compatible keys found
+                    // so just return here
+                    return;
+                }
+                Key key = kg.generateKey();
                 md.init(key);
             }
 

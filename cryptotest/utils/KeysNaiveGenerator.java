@@ -42,6 +42,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.spec.InvalidKeySpecException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -52,8 +53,30 @@ import sun.security.internal.spec.TlsRsaPremasterSecretParameterSpec;
 
 public class KeysNaiveGenerator {
 
-    public static Key getDesKey() throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
+    public static KeyGenerator getKeyGenerator(String name, Provider provider) throws NoSuchAlgorithmException {
+        KeyGenerator kg;
+        try {
+            kg = KeyGenerator.getInstance(name, provider);
+        } catch (NoSuchAlgorithmException e) {
+            kg = KeyGenerator.getInstance(name);
+        }
+        return kg;
+    }
+
+    public static KeyPairGenerator getKeyPairGenerator(String name, Provider provider) throws NoSuchAlgorithmException {
+        KeyPairGenerator kpg;
+        try {
+            kpg = KeyPairGenerator.getInstance(name, provider);
+        } catch (NoSuchAlgorithmException e) {
+            kpg = KeyPairGenerator.getInstance(name);
+        }
+        return kpg;
+    }
+
+
+
+    public static Key getDesKey(Provider provider) throws NoSuchAlgorithmException {
+        KeyGenerator keyGenerator = getKeyGenerator("DES", provider);
         keyGenerator.init(56);
         return keyGenerator.generateKey();
     }
@@ -110,55 +133,54 @@ public class KeysNaiveGenerator {
         return key;
     }
 
-    public static SecretKey getDesedeKey() throws NoSuchAlgorithmException {
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("DESede");
-        keyGenerator.init(112);
+    public static SecretKey getDesedeKey(Provider provider) throws NoSuchAlgorithmException {
+        KeyGenerator keyGenerator = getKeyGenerator("DESede", provider);
+        /* keyGenerator.init(112); */
         return keyGenerator.generateKey();
     }
 
-    public static KeyPair getRsaKeyPair() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+    public static KeyPair getRsaKeyPair(Provider provider) throws NoSuchAlgorithmException {
+        KeyPairGenerator keyGen = getKeyPairGenerator("RSA", provider);
         return keyGen.genKeyPair();
     }
 
-    public static PrivateKey getRsaPrivateKey() throws NoSuchAlgorithmException {
-        return getRsaKeyPair().getPrivate();
+    public static PrivateKey getRsaPrivateKey(Provider provider) throws NoSuchAlgorithmException {
+        return getRsaKeyPair(provider).getPrivate();
 
     }
 
-    public static KeyPair getDsaKeyPair() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
+    public static KeyPair getDsaKeyPair(Provider provider) throws NoSuchAlgorithmException {
+        KeyPairGenerator keyGen = getKeyPairGenerator("DSA", provider);
         return keyGen.genKeyPair();
     }
 
-    public static PrivateKey getDsaPrivateKey() throws NoSuchAlgorithmException {
-        return getDsaKeyPair().getPrivate();
+    public static PrivateKey getDsaPrivateKey(Provider provider) throws NoSuchAlgorithmException {
+        return getDsaKeyPair(provider).getPrivate();
     }
 
-    public static KeyPair getDsaKeyPair1024() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
+    public static KeyPair getDsaKeyPair1024(Provider provider) throws NoSuchAlgorithmException {
+        KeyPairGenerator keyGen = getKeyPairGenerator("DSA", provider);
         keyGen.initialize(1024);
         return keyGen.genKeyPair();
     }
 
-    public static PrivateKey getDsaPrivateKey1024() throws NoSuchAlgorithmException {
-        return getDsaKeyPair1024().getPrivate();
+    public static PrivateKey getDsaPrivateKey1024(Provider provider) throws NoSuchAlgorithmException {
+        return getDsaKeyPair1024(provider).getPrivate();
     }
 
-    public static KeyPair getEcKeyPair() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
+    public static KeyPair getEcKeyPair(Provider provider) throws NoSuchAlgorithmException {
+        KeyPairGenerator keyGen = getKeyPairGenerator("EC", provider);
         return keyGen.genKeyPair();
     }
 
-    public static PrivateKey getEcPrivateKey() throws NoSuchAlgorithmException {
-        return getEcKeyPair().getPrivate();
+    public static PrivateKey getEcPrivateKey(Provider provider) throws NoSuchAlgorithmException {
+        return getEcKeyPair(provider).getPrivate();
 
     }
 
-    public static SecretKey getBlowfishKey() {
-        String Key = "Something";
-        byte[] KeyData = Key.getBytes();
-        return new SecretKeySpec(KeyData, "Blowfish");
+    public static SecretKey getBlowfishKey(Provider provider) throws NoSuchAlgorithmException {
+        KeyGenerator kg = getKeyGenerator("Blowfish", provider);
+        return kg.generateKey();
     }
 
     public static SecretKey getRc2Key() {
@@ -167,28 +189,26 @@ public class KeysNaiveGenerator {
         return new SecretKeySpec(KeyData, "RC2");
     }
 
-    public static SecretKey getArcFourKey() {
-        String Key = "Something";
-        byte[] KeyData = Key.getBytes();
-        return new SecretKeySpec(KeyData, "ARCFOUR");
+    public static SecretKey getArcFourKey(Provider provider) throws NoSuchAlgorithmException {
+        KeyGenerator kg = getKeyGenerator("ARCFOUR", provider);
+        return kg.generateKey();
     }
 
-    public static SecretKey getAesKey() {
-//sorry, aligned with length of message
-        String key = "exactlyEg16bytes";
-        byte[] KeyData = key.getBytes();
-        return new SecretKeySpec(KeyData, "AES");
+    public static SecretKey getAesKey(Provider provider) throws NoSuchAlgorithmException {
+        KeyGenerator kg = getKeyGenerator("AES", provider);
+        kg.init(128);
+        return kg.generateKey();
     }
 
-    public static SecretKey getAesKey192() {
-        String key192 = "24charsToCreate192bitess";
-        byte[] KeyData = key192.getBytes();
-        return new SecretKeySpec(KeyData, "AES");
+    public static SecretKey getAesKey192(Provider provider) throws NoSuchAlgorithmException {
+        KeyGenerator kg = getKeyGenerator("AES", provider);
+        kg.init(192);
+        return kg.generateKey();
     }
 
-    public static SecretKey getAesKey256() {
-        String key192 = "32charsToCreate26bitesssssssssss";
-        byte[] KeyData = key192.getBytes();
-        return new SecretKeySpec(KeyData, "AES");
+    public static SecretKey getAesKey256(Provider provider) throws NoSuchAlgorithmException {
+        KeyGenerator kg = getKeyGenerator("AES", provider);
+        kg.init(256);
+        return kg.generateKey();
     }
 }

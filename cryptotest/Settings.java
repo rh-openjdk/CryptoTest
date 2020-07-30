@@ -54,8 +54,6 @@ public class Settings {
     public static boolean skipAgentTests = getBooleanProperty("cryptotests.skipAgentTests", false);
     //not only names of algorithms will be invoked, but also all aliases. Number of tests multiply by aprox 3, but right thing to do
     public static boolean testAliases = true;
-    // all mechanisms ar enot only initiated, but also used, nss have some issues right now
-    public static boolean runNss = true;
 
     public static class VerbositySettings {
 

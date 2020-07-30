@@ -67,11 +67,11 @@ public class SignatureTests extends AlgorithmTest {
         try {
             Signature sig = Signature.getInstance(alias, service.getProvider());
             //most of them are happy with rsa...
-            PrivateKey key = getRsaPrivateKey();
+            PrivateKey key = getRsaPrivateKey(service.getProvider());
             if (service.getAlgorithm().contains("EC")) {
-                key = getEcPrivateKey();
+                key = getEcPrivateKey(service.getProvider());
             } else if (service.getAlgorithm().contains("DSA")) {
-                if (service.getAlgorithm().contains("SHA1")) {
+                //if (service.getAlgorithm().contains("SHA1")) {
                     /* SHA1 is not sufficient for default DSA key size,
                        throwing:
                        java.security.InvalidKeyException: The security strength of SHA-1 digest algorithm is not sufficient for this key size
@@ -79,13 +79,17 @@ public class SignatureTests extends AlgorithmTest {
                        See:
                        https://bugs.java.com/view_bug.do?bug_id=8184341
                        http://hg.openjdk.java.net/jdk8u/jdk8u-dev/jdk/file/8a97a690a0b3/src/share/classes/sun/security/provider/DSA.java#l104
+
+                       1024-bits is also needed for pkcs11 in fips mode, default size does not work there
                     */
-                    key = getDsaPrivateKey1024();
+                    key = getDsaPrivateKey1024(service.getProvider());
+                    /*
                 } else {
-                    key = getDsaPrivateKey();
+                    key = getDsaPrivateKey(service.getProvider());
                 }
+                */
             } else if (service.getAlgorithm().contains("RSASSA-PSS")){
-                KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSASSA-PSS");
+                KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSASSA-PSS", service.getProvider());
                 KeyPair kp = kpg.generateKeyPair();
                 key = kp.getPrivate();
                 sig.setParameter(new PSSParameterSpec(10));
