@@ -64,13 +64,10 @@ public class KeyGeneratorTests extends AlgorithmTest {
         r.assertItself();
     }
 
-    //should be almighty ssl3
-    int P_MAJ = 3;
-    int P_MIN = 0;
-
     @Override
     protected void checkAlgorithm(Provider.Service service, String alias) throws AlgorithmInstantiationException, AlgorithmRunException {
         try {
+            Provider provider = service.getProvider();
             KeyGenerator kg = KeyGenerator.getInstance(alias, service.getProvider());
             int keyLength = 256;
             SecretKey result = null;
@@ -81,21 +78,37 @@ public class KeyGeneratorTests extends AlgorithmTest {
             }
             //fixme replace all deprecated calls by correct instantiations
             //fixme repalce hardcoded versions by iterating over all version (can be hard by various versions not supported in various impls)
-            if (service.getAlgorithm().contains("TlsPrf") || service.getAlgorithm().contains("Tls12Prf")) {
-                SecretKey key = KeysNaiveGenerator.getTlsRsaPremasterSecret(P_MAJ, P_MIN);
-                TlsPrfParameterSpec params = new TlsPrfParameterSpec(key, "SomeLabel", new byte[]{1, 2, 3}, 10, "sha1", 20, 64);
+            // TLS 1.1: 3, 2
+            // TLS 1.2: 3, 3
+            if (service.getAlgorithm().contains("SunTlsRsaPremasterSecret")) {
+                TlsRsaPremasterSecretParameterSpec params = KeysNaiveGenerator.getTlsPremasterParam(3, 3);
                 kg.init(params);
-            } else if (service.getAlgorithm().contains("TlsMasterSecret")) {
-                SecretKey key = KeysNaiveGenerator.getTlsRsaPremasterSecret(P_MAJ, P_MIN);
-                TlsMasterSecretParameterSpec params = new TlsMasterSecretParameterSpec(key, P_MAJ, P_MIN, new byte[]{1, 2, 3}, new byte[]{1, 2, 3}, "sha1", 16, 64);
+            } else if (service.getAlgorithm().contains("SunTlsMasterSecret")) {
+                // SunTlsMasterSecret used for tls < 1.2, SunTls12MasterSecret for tls >= 1.2
+                // https://hg.openjdk.java.net/jdk-updates/jdk11u/file/db89b5b9b98b/src/java.base/share/classes/sun/security/ssl/SSLMasterKeyDerivation.java#l99
+                TlsMasterSecretParameterSpec params = KeysNaiveGenerator.getTlsMasterParam(provider, 3, 2);
                 kg.init(params);
-            } else if (service.getAlgorithm().contains("TlsKeyMaterial")) {
-                SecretKey key = KeysNaiveGenerator.getTlsMasterSecret();
-                TlsKeyMaterialParameterSpec params = new TlsKeyMaterialParameterSpec(key, P_MAJ, P_MIN, new byte[]{1, 2, 3}, new byte[]{1, 2, 3},
-                        "TlsMasterSecret", 4, 4, 4, 4, "md5", 4, 4);
+            } else if (service.getAlgorithm().contains("SunTls12MasterSecret")) {
+                TlsMasterSecretParameterSpec params = KeysNaiveGenerator.getTlsMasterParam(provider, 3, 3);
                 kg.init(params);
-            } else if (service.getAlgorithm().contains("TlsRsaPremaster")) {
-                kg.init(new TlsRsaPremasterSecretParameterSpec(1, 1));
+            } else if (service.getAlgorithm().contains("SunTlsKeyMaterial")) {
+                // SunTlsKeyMaterial used for tls < 1.2, SunTls12KeyMaterial for tls >= 1.2
+                // https://hg.openjdk.java.net/jdk-updates/jdk11u/file/db89b5b9b98b/src/java.base/share/classes/sun/security/ssl/SSLTrafficKeyDerivation.java#l236
+                TlsKeyMaterialParameterSpec params = KeysNaiveGenerator.getTlsKeyMaterialParam(provider, 3, 2);
+                kg.init(params);
+            } else if (service.getAlgorithm().contains("SunTls12KeyMaterial")) {
+                TlsKeyMaterialParameterSpec params = KeysNaiveGenerator.getTlsKeyMaterialParam(provider, 3, 3);
+                kg.init(params);
+            } else if (service.getAlgorithm().contains("SunTlsPrf")) {
+                // SunTlsPrf is used for tls < 1.2
+                // https://hg.openjdk.java.net/jdk-updates/jdk11u/file/db89b5b9b98b/src/java.base/share/classes/sun/security/ssl/Finished.java#l225
+                TlsPrfParameterSpec params = KeysNaiveGenerator.getTlsPrfParam(provider, 3, 2);
+                kg.init(params);
+            } else if (service.getAlgorithm().contains("SunTls12Prf")) {
+                // SunTls12Prf is used for tls >= 1.2
+                // https://hg.openjdk.java.net/jdk-updates/jdk11u/file/db89b5b9b98b/src/java.base/share/classes/sun/security/ssl/Finished.java#l276
+                TlsPrfParameterSpec params = KeysNaiveGenerator.getTlsPrfParam(provider, 3, 3);
+                kg.init(params);
             } else {
                 //simple init
                 kg.init(keyLength);

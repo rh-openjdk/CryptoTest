@@ -50,6 +50,9 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import sun.security.internal.spec.TlsRsaPremasterSecretParameterSpec;
+import sun.security.internal.spec.TlsMasterSecretParameterSpec;
+import sun.security.internal.spec.TlsKeyMaterialParameterSpec;
+import sun.security.internal.spec.TlsPrfParameterSpec;
 
 public class KeysNaiveGenerator {
 
@@ -73,50 +76,67 @@ public class KeysNaiveGenerator {
         return kpg;
     }
 
-
-
     public static Key getDesKey(Provider provider) throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = getKeyGenerator("DES", provider);
         keyGenerator.init(56);
         return keyGenerator.generateKey();
     }
 
-    public static SecretKey getTlsMasterSecret() throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
-//        KeyGenerator kg = KeyGenerator.getInstance("TlsMasterSecret");
-//        kg.init(new TlsRsaPremasterSecretParameterSpec(version.major, version.minor));
-//        return kg.generateKey();
-        SecretKey masterkey = new SecretKeySpec(new byte[]{1, 2, 3}, "TlsMasterSecret");
-        return masterkey;
-
+    // https://hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/4687075d8ccf/src/share/classes/sun/security/internal/spec/
+    public static TlsRsaPremasterSecretParameterSpec getTlsPremasterParam(int major, int minor) {
+        // https://hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/4687075d8ccf/src/share/classes/sun/security/ssl/RSAClientKeyExchange.java#l79
+        int version = major << 8 | minor;
+        return new TlsRsaPremasterSecretParameterSpec(version, version);
     }
 
-    public static SecretKey getTlsRsaPremasterSecret(int major, int minor) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
-        KeyGenerator kg = KeyGenerator.getInstance("SunTlsRsaPremasterSecret");
-        kg.init(new TlsRsaPremasterSecretParameterSpec(major, minor));
+    public static TlsMasterSecretParameterSpec getTlsMasterParam(Provider provider, int major, int minor) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+        SecretKey premasterKey = getTlsRsaPremasterSecret(provider, major, minor);
+        TlsMasterSecretParameterSpec params =
+            new TlsMasterSecretParameterSpec(
+                premasterKey, major, minor,
+                new byte[32], new byte[32], "SHA-256", 32, 64);
+        return params;
+    }
+
+    public static TlsKeyMaterialParameterSpec getTlsKeyMaterialParam(Provider provider, int major, int minor) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+        SecretKey masterSecret = getTlsMasterSecret(provider, major, minor);
+        // http://hg.openjdk.java.net/jdk-updates/jdk11u/file/db89b5b9b98b/src/java.base/share/classes/sun/security/ssl/SSLTrafficKeyDerivation.java#l274
+        // TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
+        // http://hg.openjdk.java.net/jdk-updates/jdk11u/file/db89b5b9b98b/src/java.base/share/classes/sun/security/ssl/CipherSuite.java#l163
+        TlsKeyMaterialParameterSpec params = new TlsKeyMaterialParameterSpec(
+            masterSecret, major, minor,
+            new byte[32],
+            new byte[32],
+            // http://hg.openjdk.java.net/jdk-updates/jdk11u/file/db89b5b9b98b/src/java.base/share/classes/sun/security/ssl/SSLCipher.java#l243
+            // cipher.algorithm, cipher.keySize, cipher.expandedSize
+            "AES", 32, 32,
+            // ivSize, macAlg.size
+            0 /*12*/, 32,
+            // http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/931fb59eae26/src/share/classes/sun/security/ssl/CipherSuite.java#l628
+            // hash.name, hash.length, hash.blocksize
+            "SHA-256", 32, 64);
+        return params;
+    }
+
+    public static TlsPrfParameterSpec getTlsPrfParam(Provider provider, int major, int minor) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+        SecretKey masterSecret = getTlsMasterSecret(provider, major, minor);
+        TlsPrfParameterSpec params = new TlsPrfParameterSpec(
+            masterSecret,
+            "client finished", "a".getBytes(), 12,
+            "SHA-256", 32, 64);
+        return params;
+    }
+
+    public static SecretKey getTlsRsaPremasterSecret(Provider provider, int major, int minor) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+        KeyGenerator kg = getKeyGenerator("SunTlsRsaPremasterSecret", provider);
+        kg.init(getTlsPremasterParam(major, minor));
         return kg.generateKey();
     }
 
-    public static SecretKey getTlsRsaPremasterSecretProtocolVersion(/*private since jdk11 ProtocolVersion*/Object version) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
-        KeyGenerator kg = KeyGenerator.getInstance("SunTlsRsaPremasterSecret");
-        int major = getIntValueFromHiddenObjectCatched(version, "major");
-        int minor = getIntValueFromHiddenObjectCatched(version, "minor");
-        kg.init(new TlsRsaPremasterSecretParameterSpec(major, minor));
+    public static SecretKey getTlsMasterSecret(Provider provider, int major, int minor) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+        KeyGenerator kg = getKeyGenerator("SunTls12MasterSecret", provider);
+        kg.init(getTlsMasterParam(provider, major, minor));
         return kg.generateKey();
-    }
-
-    private static int getIntValueFromHiddenObjectCatched(Object version, String field) throws RuntimeException {
-        try {
-            return getIntValueFromHiddenObject(version, field);
-        } catch (IllegalArgumentException | NoSuchFieldException | IllegalAccessException | SecurityException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private static int getIntValueFromHiddenObject(Object version, String field) throws IllegalArgumentException, NoSuchFieldException, IllegalAccessException, SecurityException {
-        Field major = version.getClass().getDeclaredField(field);
-        major.setAccessible(true);
-        int majorValue = (int) major.get(version);
-        return majorValue;
     }
 
     public static SecretKey getPbeKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
