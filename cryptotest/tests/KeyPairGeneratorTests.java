@@ -36,6 +36,12 @@ public class KeyPairGeneratorTests extends AlgorithmTest {
             } else if (service.getAlgorithm().contains("X448")){
                 // https://docs.oracle.com/en/java/javase/11/security/oracle-providers.html#GUID-B1F2B3F3-F2A4-4FF5-8887-3B3335343B2A
                 keySize = 448;
+            } else if (service.getAlgorithm().contains("DH") || service.getAlgorithm().contains("DiffieHellman")) {
+                // DH < 2048 disabled in DEFAULT, FIPS
+                // https://access.redhat.com/articles/3642912
+                keySize = 2048;
+            } else if (service.getAlgorithm().contains("RSA")) {
+                keySize = 2048;
             }
             keyPairGenerator.initialize(keySize, random);
             KeyPair pair = keyPairGenerator.genKeyPair();

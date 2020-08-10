@@ -4,6 +4,8 @@ import cryptotest.utils.AlgorithmInstantiationException;
 import cryptotest.utils.AlgorithmRunException;
 import cryptotest.utils.AlgorithmTest;
 import cryptotest.utils.TestResult;
+import cryptotest.utils.KeysNaiveGenerator;
+import cryptotest.utils.Misc;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -35,6 +37,9 @@ public class SecretKeyFactoryTests extends AlgorithmTest {
         try {
             SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance(alias, service.getProvider());
             KeySpec keySpec;
+            SecretKey secretKey;
+            Provider p = service.getProvider();
+            boolean pkcs11fips = Misc.isPkcs11Fips(p);
 
             // order of conditions is important!
             if (service.getAlgorithm().contains("PBE")) {
@@ -53,7 +58,12 @@ public class SecretKeyFactoryTests extends AlgorithmTest {
                 keySpec = null;
             }
 
-            SecretKey secretKey = secretKeyFactory.generateSecret(keySpec);
+            if (!pkcs11fips) {
+                secretKey = secretKeyFactory.generateSecret(keySpec);
+            } else {
+                /* pkcs11 provider in fips mode does not support raw secrets ala *Spec */
+                secretKey = KeysNaiveGenerator.getKeyGenerator(service.getAlgorithm(), p).generateKey();
+            }
 
             if (secretKey == null || secretKeyFactory.translateKey(secretKey) == null) {
                 throw new UnsupportedOperationException("Generated key is null for " + service.getAlgorithm() + " in"

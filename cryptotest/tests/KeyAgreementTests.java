@@ -11,6 +11,8 @@ import java.security.spec.X509EncodedKeySpec;
 import javax.crypto.KeyAgreement;
 import com.sun.crypto.provider.DHKeyPairGenerator;
 import sun.security.ec.ECKeyPairGenerator;
+import cryptotest.utils.KeysNaiveGenerator;
+import cryptotest.utils.Misc;
 
 public class KeyAgreementTests extends AlgorithmTest {
 
@@ -27,22 +29,11 @@ public class KeyAgreementTests extends AlgorithmTest {
         try {
             KeyAgreement kagr = KeyAgreement.getInstance(alias, service.getProvider());
             KeyPair keypair;
-            if ("ECDH".equals(alias)) {
-                keypair = new ECKeyPairGenerator().generateKeyPair();
-                
-            } else if (service.getAlgorithm().startsWith("XDH")){
-                KeyPairGenerator kpg = KeyPairGenerator.getInstance("XDH");
-                keypair = kpg.generateKeyPair();
-            } else if (service.getAlgorithm().startsWith("X25519")){
-                KeyPairGenerator kpg = KeyPairGenerator.getInstance("X25519");
-                keypair = kpg.generateKeyPair();
-            } else if (service.getAlgorithm().contains("X448")) {
-                KeyPairGenerator kpg = KeyPairGenerator.getInstance("X448");
-                keypair = kpg.generateKeyPair();
+            String keyType = alias;
+            if ("ECDH".equals(keyType)) {
+                keyType = "EC";
             }
-            else {
-                keypair = new DHKeyPairGenerator().generateKeyPair();
-            }
+            keypair = KeysNaiveGenerator.getKeyPairGenerator(keyType, service.getProvider()).generateKeyPair();
             PrivateKey pk = keypair.getPrivate();
             printResult(pk.getEncoded());
             PublicKey pubkey = keypair.getPublic();
@@ -51,7 +42,17 @@ public class KeyAgreementTests extends AlgorithmTest {
             // do not print result, can return none (see the documentation)
             kagr.doPhase(pubkey, true);
 
-            printResult(kagr.generateSecret());        
+            if (!Misc.isPkcs11Fips(service.getProvider())) {
+                /* pkcs11 in FIPS mode cannot obtain raw secrets (CKR_ATTRIBUTE_SENSITIVE)
+                   https://hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/4687075d8ccf/src/share/classes/sun/security/pkcs11/P11ECDHKeyAgreement.java#l140
+                */
+                printResult(kagr.generateSecret());
+            } else {
+                /* pkcs11 only supports TlsPremasterSecret algorithm, see:
+                   https://hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/4687075d8ccf/src/share/classes/sun/security/pkcs11/P11ECDHKeyAgreement.java#l172
+                */
+                printResult(kagr.generateSecret("TlsPremasterSecret").toString());
+            }
         } catch (NoSuchAlgorithmException ex) {
             throw new AlgorithmInstantiationException(ex);
         } catch (InvalidKeyException|NullPointerException ex) {
