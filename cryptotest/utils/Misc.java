@@ -53,8 +53,17 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 import javax.security.sasl.RealmCallback;
+import java.security.Provider;
 
 public class Misc {
+
+    /* checks if provider is pksc11 in FIPS mode */
+    public static boolean isPkcs11Fips(Provider p) {
+        if (p.getName().equals("SunPKCS11-NSS-FIPS")) {
+            return true;
+        }
+        return false;
+    }
 
     public static List<String> getAliases(Provider.Service service) {
         try {
