@@ -6,6 +6,8 @@ import cryptotest.utils.AlgorithmTest;
 import cryptotest.utils.KeysNaiveGenerator;
 import cryptotest.utils.TestResult;
 import sun.security.x509.X509CertImpl;
+import java.security.cert.X509Certificate;
+import java.io.InputStream;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.IOException;
@@ -43,54 +45,36 @@ public class CertPathBuilderTests extends AlgorithmTest {
         try {
             CertPathBuilder certPathBuilder = CertPathBuilder.getInstance(alias, service.getProvider());
 
-            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-            ks.load(null, new char[]{104, 111, 118, 110, 111});
-            ks.setCertificateEntry("bbb", new DummyCertificate(service.getProvider()));
+            InputStream is = CertPathValidatorTests.class.getResourceAsStream("test.jks");
+            KeyStore ks = KeyStore.getInstance("JKS");
+            ks.load(is, "password".toCharArray());
 
-            CertStore cs = CertStore.getInstance("Collection", new CollectionCertStoreParameters(Arrays.asList(new DummyCertificate(service.getProvider()), new DummyCertificate(service.getProvider()))));
+            Certificate serverCrt = ks.getCertificate("server");
+            Certificate caCrt = ks.getCertificate("ca");
 
+            CertStore cs = CertStore.getInstance("Collection",
+                new CollectionCertStoreParameters(
+                    Arrays.asList(
+                        serverCrt,
+                        caCrt
+                    )
+                )
+            );
 
             Set<TrustAnchor> trustAnchors = new HashSet<>();
-            trustAnchors.add(new TrustAnchor(new DummyCertificate(service.getProvider()), null));
+            trustAnchors.add(new TrustAnchor((X509Certificate) caCrt, null));
 
-            PKIXBuilderParameters params = new PKIXBuilderParameters(ks, new X509CertSelector() {
-                @Override
-                public boolean match(Certificate cert) {
-                    return true;
-                }
-            });
+            X509CertSelector target = new X509CertSelector();
+
+            PKIXBuilderParameters params = new PKIXBuilderParameters(trustAnchors, target);
             params.addCertStore(cs);
 
-
             certPathBuilder.build(params);
-        } catch (IOException | CertificateException | InvalidAlgorithmParameterException | CertPathBuilderException | KeyStoreException e) {
+        } catch (IOException | CertificateException | InvalidAlgorithmParameterException | CertPathBuilderException | KeyStoreException e ) {
             throw new AlgorithmRunException(e);
         } catch (NoSuchAlgorithmException e) {
             throw new AlgorithmInstantiationException(e);
         }
     }
 
-    private static class DummyCertificate extends X509CertImpl {
-
-        private final KeyPair keyPair;
-
-        private DummyCertificate(Provider provider) throws NoSuchAlgorithmException {
-            keyPair = KeysNaiveGenerator.getRsaKeyPair(provider);
-        }
-
-        @Override
-        public PublicKey getPublicKey() {
-            return keyPair.getPublic();
-        }
-
-        @Override
-        public X500Principal getIssuerX500Principal() {
-            return new X500Principal("CN=Jon");
-        }
-
-        @Override
-        public X500Principal getSubjectX500Principal() {
-            return new X500Principal("CN=Doe");
-        }
-    }
 }
