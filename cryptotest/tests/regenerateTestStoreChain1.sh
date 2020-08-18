@@ -10,6 +10,7 @@ ca=companythatdoesnotexist
 chain1=intermediatecompanycertificate
 chain2=thirdcompany
 validity="-validity 2000"
+alg="-keyalg RSA"
 
 # clena legacy and new
 rm -fv *.pem
@@ -21,9 +22,9 @@ done
 keytool -list  $PSKS  ;
 
 # in original tutorial is bc:c
-keytool -genkeypair $PSKS $KP $validity -alias root -ext bc:ca:true -dname "ou=root, o=root, c=root"
-keytool -genkeypair $PSKS $KP $validity -alias ca -ext bc:ca:true -dname "ou=ca, o=ca, c=ca"
-keytool -genkeypair $PSKS $KP $validity -alias server -dname "cn=server, ou=server, o=server, c=server"
+keytool -genkeypair $PSKS $KP $validity $alg -alias root -ext bc:ca:true -dname "ou=root, o=root, c=root"
+keytool -genkeypair $PSKS $KP $validity $alg -alias ca -ext bc:ca:true -dname "ou=ca, o=ca, c=ca"
+keytool -genkeypair $PSKS $KP $validity $alg -alias server -dname "cn=server, ou=server, o=server, c=server"
 
 keytool $PSKS -alias root -exportcert -rfc > root.pem
 keytool $PSKS -certreq -alias ca | keytool $PSKS -gencert $validity -alias root -ext BC=0 -rfc > ca.pem
