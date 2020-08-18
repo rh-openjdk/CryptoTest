@@ -70,7 +70,7 @@ public class CertPathBuilderTests extends AlgorithmTest {
             params.addCertStore(cs);
 
             certPathBuilder.build(params);
-        } catch (IOException | CertificateException | InvalidAlgorithmParameterException | CertPathBuilderException | KeyStoreException e ) {
+        } catch (IOException | CertificateException | InvalidAlgorithmParameterException | CertPathBuilderException | KeyStoreException e) {
             throw new AlgorithmRunException(e);
         } catch (NoSuchAlgorithmException e) {
             throw new AlgorithmInstantiationException(e);
