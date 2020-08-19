@@ -53,6 +53,7 @@ import sun.security.internal.spec.TlsRsaPremasterSecretParameterSpec;
 import sun.security.internal.spec.TlsMasterSecretParameterSpec;
 import sun.security.internal.spec.TlsKeyMaterialParameterSpec;
 import sun.security.internal.spec.TlsPrfParameterSpec;
+import sun.security.internal.spec.TlsKeyMaterialSpec;
 
 public class KeysNaiveGenerator {
 
@@ -137,6 +138,17 @@ public class KeysNaiveGenerator {
         KeyGenerator kg = getKeyGenerator("SunTls12MasterSecret", provider);
         kg.init(getTlsMasterParam(provider, major, minor));
         return kg.generateKey();
+    }
+
+    // Complicated way to obtain Mac key when there are no Mac key generators available (FIPS mode)
+    public static Key getMacKeyFromTlsKeyMaterial(Provider provider) throws InvalidAlgorithmParameterException, NoSuchAlgorithmException {
+        KeyGenerator kg = getKeyGenerator("SunTls12KeyMaterial", provider);
+        kg.init(getTlsKeyMaterialParam(provider, 3, 3));
+        Key key = kg.generateKey();
+        if (key instanceof TlsKeyMaterialSpec) {
+            return ((TlsKeyMaterialSpec) key).getClientMacKey();
+        }
+        return null;
     }
 
     public static SecretKey getPbeKey() throws NoSuchAlgorithmException, InvalidKeySpecException {

@@ -67,8 +67,11 @@ public class MacTests extends AlgorithmTest {
         try {
             Mac md = Mac.getInstance(alias, service.getProvider());
             byte[] b = new byte[]{1, 2, 3};
+            Provider provider =  service.getProvider();
+            String algorithm = service.getAlgorithm();
+            String generatorAlgorithm;
 
-            if (service.getAlgorithm().contains("PBE")) {
+            if (algorithm.contains("PBE")) {
                 //cool, the pbe key is not ointerface pbekey, so salt do nto bubble formkey to algorithm:-/
                 Key key = KeysNaiveGenerator.getPbeKeyWithSalt();
                 //so we need to pass salt and ioterations by param
@@ -76,14 +79,27 @@ public class MacTests extends AlgorithmTest {
                 md.init(key, parmas);
             } else {
                 KeyGenerator kg;
+                Key key;
                 try {
-                    kg = KeysNaiveGenerator.getKeyGenerator(service.getAlgorithm(), service.getProvider());
+                    generatorAlgorithm = algorithm;
+                    if (algorithm.startsWith("SslMac")) {
+                        /*
+                            Fixes SslMac* (e.g. SslMacMD5) as these do not have
+                            keygens, Hmac keygens seem to work there
+                        */
+                        generatorAlgorithm = algorithm.replace("SslMac", "Hmac");
+                    } else if (algorithm.startsWith("HmacSHA512/")) {
+                        /*
+                            Truncated SHA-512 variants (e.g. HmacSHA512/224)
+                        */
+                        generatorAlgorithm = "HmacSHA512";
+                    }
+                    kg = KeysNaiveGenerator.getKeyGenerator(generatorAlgorithm, provider);
+                    key = kg.generateKey();
                 } catch (NoSuchAlgorithmException e) {
-                    // No KeyGenerator, which could generate compatible keys found
-                    // so just return here
-                    return;
+                    // use workaround, when there are no keygens available
+                    key = KeysNaiveGenerator.getMacKeyFromTlsKeyMaterial(provider);
                 }
-                Key key = kg.generateKey();
                 md.init(key);
             }
 
