@@ -12,7 +12,9 @@ TESTS_EXCLUDE := $(shell printf '%s' ".*[.]sh" ;  )
 
 SKIP_AGENT_TESTS_ARG := $(shell [ 1 = "$(SKIP_AGENT_TESTS)" ] && printf '%s' '-Dcryptotests.skipAgentTests=1' )
 
-.PHONY: clean CryptoTest all
+TEST_NAMES := $(patsubst cryptotest/tests/%Tests.java,%Tests,$(wildcard cryptotest/tests/*Tests.java))
+
+.PHONY: clean CryptoTest all list-tests $(TEST_NAMES)
 
 all: CryptoTest
 
@@ -27,4 +29,8 @@ classes:
 CryptoTest: | classes
 	$(JAVA) $(JAVA_MOD_ARGS) -cp classes $(SKIP_AGENT_TESTS_ARG) cryptotest.CryptoTest
 
-# todo: targets for individual testsuits
+list-tests:
+	printf '%s\n' $(TEST_NAMES) | tr ' ' '\n' | sort
+
+$(TEST_NAMES): | classes
+	$(JAVA) $(JAVA_MOD_ARGS) -cp classes $(SKIP_AGENT_TESTS_ARG) cryptotest.tests.$@
