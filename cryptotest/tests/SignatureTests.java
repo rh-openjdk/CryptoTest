@@ -90,7 +90,7 @@ public class SignatureTests extends AlgorithmTest {
                 }
                 */
             } else if (service.getAlgorithm().contains("RSASSA-PSS")){
-                KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSASSA-PSS", service.getProvider());
+                KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", service.getProvider());
                 KeyPair kp = kpg.generateKeyPair();
                 key = kp.getPrivate();
                 sig.setParameter(new PSSParameterSpec(10));
