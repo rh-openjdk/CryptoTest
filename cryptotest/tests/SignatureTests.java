@@ -43,6 +43,7 @@ import static cryptotest.utils.KeysNaiveGenerator.getEcPrivateKey;
 import static cryptotest.utils.KeysNaiveGenerator.getRsaPrivateKey;
 import static cryptotest.utils.KeysNaiveGenerator.getDsaPrivateKey1024;
 import cryptotest.utils.TestResult;
+import cryptotest.utils.Misc;
 
 import java.security.*;
 import java.security.spec.PSSParameterSpec;
@@ -89,7 +90,7 @@ public class SignatureTests extends AlgorithmTest {
                 }
                 */
             } else if (service.getAlgorithm().contains("RSASSA-PSS")){
-                KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSASSA-PSS", service.getProvider());
+                KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", service.getProvider());
                 KeyPair kp = kpg.generateKeyPair();
                 key = kp.getPrivate();
                 sig.setParameter(new PSSParameterSpec(10));
@@ -105,6 +106,17 @@ public class SignatureTests extends AlgorithmTest {
             throw new AlgorithmInstantiationException(ex);
         } catch (InvalidKeyException | UnsupportedOperationException | InvalidParameterException | SignatureException |
                 InvalidAlgorithmParameterException | ProviderException ex) {
+            if (Misc.isPkcs11Fips(service.getProvider())
+                && ex.getMessage().startsWith("Unknown mechanism:")
+                && (service.getAlgorithm().equals("SHA512withDSA")
+                    || service.getAlgorithm().equals("SHA384withDSA")
+                    || service.getAlgorithm().equals("SHA256withDSA")
+                    || service.getAlgorithm().equals("SHA224withDSA"))) {
+                /* NOTABUG, see:
+                   https://bugzilla.redhat.com/show_bug.cgi?id=1868744
+                */
+                return;
+            }
             throw new AlgorithmRunException(ex);
         }
 
