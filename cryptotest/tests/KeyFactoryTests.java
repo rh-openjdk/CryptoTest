@@ -38,7 +38,19 @@ public class KeyFactoryTests extends AlgorithmTest {
             KeySpec publicKeySpec = null;
             Key translated = null;
 
-            if (service.getAlgorithm().contains("DSA")) {
+            if (service.getAlgorithm().equals("Ed25519") || service.getAlgorithm().equals("EdDSA") || service.getAlgorithm().equals("Ed448")) {
+                KeyPairGenerator kpg = KeysNaiveGenerator.getKeyPairGenerator(service.getAlgorithm(), p);
+                KeyPair kp = kpg.generateKeyPair();
+                translated = keyFactory.translateKey(kp.getPublic());
+                if (!pkcs11fips) {
+                    // pkcs11 provider in FIPS mode cannot obtain RAW keys
+                    // reflection used so it would compile on old jdks
+                    Class privateKeyClass = Class.forName("java.security.spec.EdECPrivateKeySpec");
+                    Class publicKeyClass = Class.forName("java.security.spec.EdECPublicKeySpec");
+                    privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), privateKeyClass);
+                    publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), publicKeyClass);
+                }
+            } else if (service.getAlgorithm().contains("DSA")) {
                 KeyPair kp = KeysNaiveGenerator.getDsaKeyPair(p);
                 translated = keyFactory.translateKey(kp.getPublic());
                 if (!pkcs11fips) {
@@ -126,7 +138,7 @@ public class KeyFactoryTests extends AlgorithmTest {
                 throw new UnsupportedOperationException("Generated key is null for " + service.getAlgorithm() + " in"
                         + service.getProvider().getName());
             }
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException | ClassNotFoundException e) {
             throw new AlgorithmInstantiationException(e);
         } catch (UnsupportedOperationException | InvalidKeySpecException | InvalidKeyException e) {
             throw new AlgorithmRunException(e);
