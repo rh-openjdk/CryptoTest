@@ -71,6 +71,10 @@ public class SignatureTests extends AlgorithmTest {
             PrivateKey key = getRsaPrivateKey(service.getProvider());
             if (service.getAlgorithm().contains("EC")) {
                 key = getEcPrivateKey(service.getProvider());
+            } else if (service.getAlgorithm().equals("Ed25519") || service.getAlgorithm().equals("EdDSA") || service.getAlgorithm().equals("Ed448")) {
+                KeyPairGenerator kpg = KeyPairGenerator.getInstance(service.getAlgorithm(), service.getProvider());
+                KeyPair kp = kpg.generateKeyPair();
+                key = kp.getPrivate();
             } else if (service.getAlgorithm().contains("DSA")) {
                 //if (service.getAlgorithm().contains("SHA1")) {
                     /* SHA1 is not sufficient for default DSA key size,
