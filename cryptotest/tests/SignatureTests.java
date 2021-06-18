@@ -46,6 +46,7 @@ import cryptotest.utils.TestResult;
 import cryptotest.utils.Misc;
 
 import java.security.*;
+import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
 
 /*
@@ -97,7 +98,23 @@ public class SignatureTests extends AlgorithmTest {
                 KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", service.getProvider());
                 KeyPair kp = kpg.generateKeyPair();
                 key = kp.getPrivate();
-                sig.setParameter(new PSSParameterSpec(10));
+                PSSParameterSpec pssParam;
+                // See:
+                // https://github.com/openjdk/jdk11u/blob/73eef16128417f4a489c4dde47383bb4a00f39d4/src/java.base/share/classes/java/security/spec/PSSParameterSpec.java#L167
+                // https://github.com/openjdk/jdk11u/blob/73eef16128417f4a489c4dde47383bb4a00f39d4/test/jdk/sun/security/mscapi/InteropWithSunRsaSign.java#L55
+                if (service.getAlgorithm().contains("SHA512")) {
+                    pssParam = new PSSParameterSpec("SHA-512", "MGF1", MGF1ParameterSpec.SHA512, 64, PSSParameterSpec.TRAILER_FIELD_BC);
+                } else if (service.getAlgorithm().contains("SHA384")) {
+                    pssParam = new PSSParameterSpec("SHA-384", "MGF1", MGF1ParameterSpec.SHA384, 48, PSSParameterSpec.TRAILER_FIELD_BC);
+                } else if (service.getAlgorithm().contains("SHA256")) {
+                    pssParam = new PSSParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, 32, PSSParameterSpec.TRAILER_FIELD_BC);
+                } else if (service.getAlgorithm().contains("SHA224")) {
+                    pssParam = new PSSParameterSpec("SHA-224", "MGF1", MGF1ParameterSpec.SHA224, 28, PSSParameterSpec.TRAILER_FIELD_BC);
+                } else {
+                    // defaults (SHA1)
+                    pssParam = new PSSParameterSpec(20);
+                }
+                sig.setParameter(pssParam);
             }
             sig.initSign(key);
             //NONEwithDSA needs 20bytes
