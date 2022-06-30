@@ -30,7 +30,7 @@ CryptoTest: | classes
 	$(JAVA) $(JAVA_MOD_ARGS) -cp classes $(SKIP_AGENT_TESTS_ARG) cryptotest.CryptoTest
 
 list-tests:
-	printf '%s\n' $(TEST_NAMES) | tr ' ' '\n' | sort
+	@printf '%s\n' $(TEST_NAMES) | tr ' ' '\n' | sort
 
 $(TEST_NAMES): | classes
 	$(JAVA) $(JAVA_MOD_ARGS) -cp classes $(SKIP_AGENT_TESTS_ARG) cryptotest.tests.$@
