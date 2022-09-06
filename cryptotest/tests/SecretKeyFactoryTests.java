@@ -82,7 +82,9 @@ public class SecretKeyFactoryTests extends AlgorithmTest {
                 keySpec = null;
             }
 
-            if (!pkcs11fips) {
+            if (!pkcs11fips
+              || service.getAlgorithm().contains("PBE")
+              || service.getAlgorithm().contains("PBKDF2")) {
                 secretKey = secretKeyFactory.generateSecret(keySpec);
             } else {
                 /* pkcs11 provider in fips mode does not support raw secrets ala *Spec */
