@@ -56,6 +56,12 @@ public class SignatureTests extends AlgorithmTest {
     @Override
     protected void checkAlgorithm(Provider.Service service, String alias) throws AlgorithmInstantiationException, AlgorithmRunException {
         try {
+            if (Misc.isPkcs11Fips(service.getProvider())
+                && service.getAlgorithm().contains("SHA3")) {
+                // skip: NSS does not support SHA3 (yet)
+                // See: https://issues.redhat.com/browse/OPENJDK-826
+                return;
+            }
             Signature sig = Signature.getInstance(alias, service.getProvider());
             //most of them are happy with rsa...
             PrivateKey key = getRsaPrivateKey(service.getProvider());
