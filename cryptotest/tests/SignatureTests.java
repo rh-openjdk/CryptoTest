@@ -57,7 +57,7 @@ public class SignatureTests extends AlgorithmTest {
     protected void checkAlgorithm(Provider.Service service, String alias) throws AlgorithmInstantiationException, AlgorithmRunException {
         try {
             if (Misc.isPkcs11Fips(service.getProvider())
-                && service.getAlgorithm().contains("SHA3")) {
+                && service.getAlgorithm().contains("SHA3-")) {
                 // skip: NSS does not support SHA3 (yet)
                 // See: https://issues.redhat.com/browse/OPENJDK-826
                 return;
