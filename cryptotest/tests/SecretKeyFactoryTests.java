@@ -78,7 +78,9 @@ public class SecretKeyFactoryTests extends AlgorithmTest {
                 keySpec = new SecretKeySpec(generateBytes(16), service.getAlgorithm());
             } else if (service.getAlgorithm().contains("ARCFOUR")) {
                 keySpec = new SecretKeySpec(generateBytes(8), service.getAlgorithm());
-            } else  {
+            } else if (service.getAlgorithm().contains("ChaCha20")) {
+                keySpec = new SecretKeySpec(generateBytes(32), service.getAlgorithm());
+            } else {
                 keySpec = null;
             }
 
