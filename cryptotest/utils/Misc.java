@@ -43,6 +43,7 @@ import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 import javax.security.sasl.RealmCallback;
 import java.security.Provider;
+import java.security.Security;
 
 public class Misc {
 
@@ -50,6 +51,16 @@ public class Misc {
     public static boolean isPkcs11Fips(Provider p) {
         if (p.getName().equals("SunPKCS11-NSS-FIPS")) {
             return true;
+        }
+        return false;
+    }
+
+    /* checks if there is pkcs11 FIPS provider in list of providers */
+    public static boolean pkcs11FipsPresent() {
+        for (Provider p : Security.getProviders()) {
+            if (isPkcs11Fips(p)) {
+                return true;
+            }
         }
         return false;
     }

@@ -62,6 +62,13 @@ public class KeyFactoryTests extends AlgorithmTest {
             KeySpec publicKeySpec = null;
             Key translated = null;
 
+            if (!pkcs11fips && Misc.pkcs11FipsPresent()) {
+                // In FIPS setup KeyFactories from other providers
+                // are only present for limited internal use,
+                // keygens for these are not available -> skip
+                return;
+            }
+
             if (service.getAlgorithm().equals("Ed25519") || service.getAlgorithm().equals("EdDSA") || service.getAlgorithm().equals("Ed448")) {
                 KeyPairGenerator kpg = KeysNaiveGenerator.getKeyPairGenerator(service.getAlgorithm(), p);
                 KeyPair kp = kpg.generateKeyPair();
