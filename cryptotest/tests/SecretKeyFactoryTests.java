@@ -67,13 +67,13 @@ public class SecretKeyFactoryTests extends AlgorithmTest {
 
             // order of conditions is important!
             if (service.getAlgorithm().contains("PBE")) {
-                keySpec = new PBEKeySpec(new char[]{'h', 'e', 's', 'l', 'o'});
+                keySpec = new PBEKeySpec(new char[]{'h', 'e', 's', 'l', 'o'}, generateBytes(8), 1);
             } else if (service.getAlgorithm().contains("DESede")) {
                 keySpec = new DESedeKeySpec(generateBytes(24));
             } else if (service.getAlgorithm().contains("DES")) {
                 keySpec = new DESKeySpec(generateBytes(8));
             } else if (service.getAlgorithm().contains("PBKDF2")) {
-                keySpec = new PBEKeySpec(new char[]{'h', 'e', 's', 'l', 'o'}, generateBytes(8), 1, 1);
+                keySpec = new PBEKeySpec(new char[]{'h', 'e', 's', 'l', 'o'}, generateBytes(8), 1, 512);
             } else if (service.getAlgorithm().contains("AES")) {
                 keySpec = new SecretKeySpec(generateBytes(16), service.getAlgorithm());
             } else if (service.getAlgorithm().contains("ARCFOUR")) {
@@ -91,6 +91,12 @@ public class SecretKeyFactoryTests extends AlgorithmTest {
             } else {
                 /* pkcs11 provider in fips mode does not support raw secrets ala *Spec */
                 secretKey = KeysNaiveGenerator.getKeyGenerator(service.getAlgorithm(), p).generateKey();
+            }
+
+            if (pkcs11fips
+                && (service.getAlgorithm().contains("PBE") || service.getAlgorithm().contains("PBKDF2"))) {
+                // current support for PBE and PBKDF2 in PKCS11 provider does not support translateKey
+                return;
             }
 
             if (secretKey == null || secretKeyFactory.translateKey(secretKey) == null) {
