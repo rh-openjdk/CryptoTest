@@ -51,7 +51,13 @@ public class KeyStoreTests extends AlgorithmTest {
     protected void checkAlgorithm(Provider.Service service, String alias) throws AlgorithmInstantiationException, AlgorithmRunException {
         try {
             KeyStore ks = KeyStore.getInstance(alias, service.getProvider());
-            ks.load(null, new char[]{'a', 'b'});
+            char[] pw = new char[]{'a', 'b'};
+            if (alias.startsWith("PKCS11")) {
+                // in case of PKCS11 this is pin to PKCS11 token
+                // (empty in default configuration)
+                pw = new char[]{};
+            }
+            ks.load(null, pw);
             printResult(ks.size());
             printResult(ks.getType());
             //creating cert is another story, so letting this be
