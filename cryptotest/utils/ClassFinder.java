@@ -74,19 +74,14 @@ public class ClassFinder {
             //it would be nice to avoid base jdk jars/modules by some path name check like http://icedtea.classpath.org/hg/icedtea-web/file/bb764e3ccbc9/netx/net/sourceforge/jnlp/controlpanel/ClassFinder.java#l76
             if (true) {
                 File f = new File(classpathEntry);
-                //this is supposed to be jtreg test, or ismple set of classes, so scaning only direcotries
-                if (!f.isDirectory()) {
-                    continue;
-                }
                 if (!f.exists()) {
                     continue;
                 }
                 if (f.isDirectory()) {
                     traverse(f.getAbsolutePath(), f, toFind, results);
-                } else {
+                } else if (classpathEntry.endsWith(".jar")) {
                     File jar = new File(classpathEntry);
-                    try {
-                        JarInputStream is = new JarInputStream(new FileInputStream(jar));
+                    try (FileInputStream fis = new FileInputStream(jar); JarInputStream is = new JarInputStream(fis)) {
                         JarEntry entry;
                         while ((entry = is.getNextJarEntry()) != null) {
                             Class c = determine(entry.getName(), toFind);
@@ -97,6 +92,8 @@ public class ClassFinder {
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
+                } else {
+                    continue;
                 }
             }
         }
@@ -123,18 +120,22 @@ public class ClassFinder {
     }
 
     static private Class determine(String name, Class toFind) {
+        if (!name.endsWith(".class")) {
+            return null;
+        }
         if (name.contains("$")) {
             return null;
         }
+        name = name.replace(".class", "");
+        name = name.replace("/", ".");
+        name = name.replace("\\", ".");
+        if (!name.startsWith("cryptotest.")) {
+            return null;
+        }
         try {
-            if (name.endsWith(".class")) {
-                name = name.replace(".class", "");
-                name = name.replace("/", ".");
-                name = name.replace("\\", ".");
-                Class clazz = Class.forName(name);
-                if (toFind.isAssignableFrom(clazz)) {
-                    return clazz;
-                }
+            Class clazz = Class.forName(name);
+            if (toFind.isAssignableFrom(clazz)) {
+                return clazz;
             }
         } catch (Throwable ex) {
             //blacklisted classes
