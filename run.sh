@@ -53,6 +53,9 @@ mkdir -p test.${TIME}/jdk/JTwork test.${TIME}/jdk/JTreport
 ${JAVA_HOME}/bin/java -jar $JTREG_HOME/lib/jtreg.jar -v1 -a -ignore:quiet \
 		-w:test.${TIME}/jdk/JTwork -r:test.${TIME}/jdk/JTreport \
 		-jdk:$JAVA \
+		-xml \
 		$BUGID \
 		$SCRIPT_DIR \
 	    | tee test.${TIME}/tests.log
+
+tar -czf test.${TIME}.tar.gz test.${TIME}/jdk/JTwork test.${TIME}/jdk/JTreport
