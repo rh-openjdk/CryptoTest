@@ -22,6 +22,21 @@
  * THE SOFTWARE.
  */
 
+/*
+ * @test
+ * @modules java.base/java.security:open
+ *          java.smartcardio/javax.smartcardio
+ * @bug 1422738
+ * @library /
+ * @build cryptotest.tests.TerminalFactoryTests
+ *        cryptotest.Settings
+ *        cryptotest.utils.AlgorithmInstantiationException
+ *        cryptotest.utils.AlgorithmRunException
+ *        cryptotest.utils.AlgorithmTest
+ *        cryptotest.utils.TestResult
+ * @run main/othervm cryptotest.tests.TerminalFactoryTests
+ */
+
 package cryptotest.tests;
 
 import cryptotest.utils.AlgorithmRunException;
