@@ -22,6 +22,21 @@
  * THE SOFTWARE.
  */
 
+/*
+ * @test
+ * @modules java.base/java.security:open
+ * @bug 1422738
+ * @library /
+ * @build cryptotest.tests.SaslServerFactoryTests
+ *        cryptotest.Settings
+ *        cryptotest.utils.AlgorithmInstantiationException
+ *        cryptotest.utils.AlgorithmRunException
+ *        cryptotest.utils.AlgorithmTest
+ *        cryptotest.utils.Misc
+ *        cryptotest.utils.TestResult
+ * @run main/othervm cryptotest.tests.SaslServerFactoryTests
+ */
+
 package cryptotest.tests;
 
 import cryptotest.Settings;

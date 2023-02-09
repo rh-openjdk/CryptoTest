@@ -22,6 +22,25 @@
  * THE SOFTWARE.
  */
 
+/*
+ * @test
+ * @modules java.base/java.security:open
+ *          java.base/com.sun.crypto.provider
+ *          java.base/sun.security.internal.spec
+ *          java.base/sun.security.ssl
+ *          java.base/sun.security.x509
+ * @bug 1422738
+ * @library /
+ * @build cryptotest.tests.CertPathBuilderTests
+ *        cryptotest.Settings
+ *        cryptotest.utils.AlgorithmInstantiationException
+ *        cryptotest.utils.AlgorithmRunException
+ *        cryptotest.utils.AlgorithmTest
+ *        cryptotest.utils.KeysNaiveGenerator
+ *        cryptotest.utils.TestResult
+ * @run main/othervm cryptotest.tests.CertPathBuilderTests
+ */
+
 package cryptotest.tests;
 
 import cryptotest.utils.AlgorithmInstantiationException;

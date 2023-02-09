@@ -21,7 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
+/*
+ * @test
+ * @modules java.base/java.security:open
+ * @bug 1422738
+ * @library /
+ * @build cryptotest.tests.TransformServiceTests
+ *        cryptotest.utils.AlgorithmInstantiationException
+ *        cryptotest.utils.AlgorithmRunException
+ *        cryptotest.utils.AlgorithmTest
+ *        cryptotest.utils.TestResult
+ * @run main/othervm cryptotest.tests.TransformServiceTests
+ */
 package cryptotest.tests;
 
 import cryptotest.utils.AlgorithmInstantiationException;

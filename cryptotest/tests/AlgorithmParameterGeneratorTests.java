@@ -22,6 +22,20 @@
  * THE SOFTWARE.
  */
 
+/*
+ * @test
+ * @modules java.base/java.security:open
+ * @bug 1422738
+ * @library /
+ * @build cryptotest.tests.AlgorithmParameterGeneratorTests
+ *        cryptotest.Settings
+ *        cryptotest.utils.AlgorithmInstantiationException
+ *        cryptotest.utils.AlgorithmRunException
+ *        cryptotest.utils.AlgorithmTest
+ *        cryptotest.utils.TestResult
+ * @run main/othervm/timeout=10000 cryptotest.tests.AlgorithmParameterGeneratorTests
+ */
+
 package cryptotest.tests;
 
 import cryptotest.utils.AlgorithmInstantiationException;

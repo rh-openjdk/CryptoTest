@@ -22,6 +22,24 @@
  * THE SOFTWARE.
  */
 
+/*
+ * @test
+ * @modules java.base/java.security:open
+ *          java.security.jgss/sun.security.jgss
+ *          java.security.jgss/sun.security.jgss.krb5
+ *          java.security.jgss/sun.security.krb5
+ * @bug 1022017
+ * @library /
+ * @build cryptotest.tests.GssApiMechanismTests
+ *        cryptotest.Settings
+ *        cryptotest.utils.AlgorithmInstantiationException
+ *        cryptotest.utils.AlgorithmRunException
+ *        cryptotest.utils.AlgorithmTest
+ *        cryptotest.utils.Misc
+ *        cryptotest.utils.TestResult
+ * @run main/othervm cryptotest.tests.GssApiMechanismTests
+ */
+
 package cryptotest.tests;
 
 import cryptotest.Settings;

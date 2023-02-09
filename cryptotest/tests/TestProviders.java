@@ -35,8 +35,16 @@ import java.util.Map;
 import java.util.Set;
 
 /*
- * IwishThisCouldBeAtTest
+ * @test
+ * @modules java.base/java.security:open
+ * @bug 1022017
+ * @library /
+ * @build cryptotest.tests.TestProviders
+ *        cryptotest.Settings
+ *        cryptotest.utils.TestResult
+ * @run main/othervm cryptotest.tests.TestProviders
  */
+
 public class TestProviders {
 
     private static String[] mustBeProviders;
