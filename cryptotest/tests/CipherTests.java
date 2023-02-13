@@ -109,7 +109,9 @@ public class CipherTests extends AlgorithmTest {
             if (initSpec != null){
                 c.init(Cipher.ENCRYPT_MODE, key, initSpec);
             }
-            else if (service.getAlgorithm().toLowerCase().contains("wrap")) {
+            else if (service.getAlgorithm().toLowerCase().contains("wrap")
+                || service.getAlgorithm().contains("KW")
+                || service.getAlgorithm().contains("KWP")) {
                 c.init(Cipher.WRAP_MODE, key);
                 AlgorithmTest.printResult(c.wrap(key));
             } else {
