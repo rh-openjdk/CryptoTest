@@ -66,8 +66,7 @@ public class ConfigurationTests extends AlgorithmTest {
             AlgorithmRunException {
         File configFile = null;
         try {
-            final String configFileAbsPath = "/tmp/javax.security.auth.login.Configuration.conf";
-            configFile = createConfigFile(configFileAbsPath);
+            configFile = createConfigFile("javax.security.auth.login.Configuration", ".conf");
 
             Configuration configuration = Configuration.getInstance(alias, new URIParameter(configFile.toURI()),
                     service.getProvider());
@@ -91,13 +90,8 @@ public class ConfigurationTests extends AlgorithmTest {
         }
     }
 
-    private File createConfigFile(String path) throws IOException {
-        File configFile = new File(path);
-        if (configFile.exists()) {
-            configFile.delete();
-        }
-
-        configFile.createNewFile();
+    private File createConfigFile(String prefix, String suffix) throws IOException {
+        File configFile = File.createTempFile(prefix, suffix);
         FileWriter fileWriter = new FileWriter(configFile);
         fileWriter.append("test {\n");
         fileWriter.append("    cryptotest.tests.ConfigurationTests required;\n");
