@@ -51,7 +51,7 @@ import javax.smartcardio.TerminalFactory;
  * This test was supposed to test PCSC Terminal factory. Unfortunately, it can't be inicialized with PCSC provider as
  * usual for some reason, we are initing it with default method (that uses PCSC provider anyways).
  * However, this testcase no longer serves its purpose, if other providers appear.
- * @author Zdeněk Žamberský, Petra Mikova
+ * @author Zdenek Zambersky, Petra Mikova
  */
 public class TerminalFactoryTests extends AlgorithmTest {
 
