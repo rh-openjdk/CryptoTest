@@ -56,3 +56,45 @@ jobs:
         run: make classes
       - name: Run
         run: make SKIP_AGENT_TESTS=1 all
+
+  test-jdk8-jtreg:
+    name: "Test JDK8 Jtreg"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 8
+      - name: Run
+        run: SKIP_AGENT_TESTS=1 ./run.sh "${JAVA_HOME}"
+
+  test-jdk11-jtreg:
+    name: "Test JDK11 Jtreg"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 11
+      - name: Run
+        run: SKIP_AGENT_TESTS=1 ./run.sh "${JAVA_HOME}"
+
+  test-jdk17-jtreg:
+    name: "Test JDK17 Jtreg"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - name: Run
+        run: SKIP_AGENT_TESTS=1 ./run.sh "${JAVA_HOME}"
