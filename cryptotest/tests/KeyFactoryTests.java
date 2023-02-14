@@ -32,6 +32,7 @@
  * @library /
  * @build cryptotest.tests.KeyFactoryTests
  *        cryptotest.Settings
+ *        cryptotest.utils.AlgorithmIgnoredException
  *        cryptotest.utils.AlgorithmInstantiationException
  *        cryptotest.utils.AlgorithmRunException
  *        cryptotest.utils.AlgorithmTest
@@ -43,6 +44,7 @@
 
 package cryptotest.tests;
 
+import cryptotest.utils.AlgorithmIgnoredException;
 import cryptotest.utils.AlgorithmInstantiationException;
 import cryptotest.utils.AlgorithmRunException;
 import cryptotest.utils.AlgorithmTest;
@@ -85,7 +87,7 @@ public class KeyFactoryTests extends AlgorithmTest {
                 // In FIPS setup KeyFactories from other providers
                 // are only present for limited internal use,
                 // keygens for these are not available -> skip
-                return;
+                throw new AlgorithmIgnoredException();
             }
 
             if (service.getAlgorithm().equals("Ed25519") || service.getAlgorithm().equals("EdDSA") || service.getAlgorithm().equals("Ed448")) {

@@ -79,6 +79,8 @@ public abstract class AlgorithmTest {
                             checkAlgorithm(service, alias);
                             System.out.println("Passed");
                         }
+                    } catch (AlgorithmIgnoredException ex) {
+                        System.out.println("Ignored");
                     } catch (AlgorithmRunException ex) {
                         failedRuns.add(new Exception(title, ex));
                         System.out.println(ex);

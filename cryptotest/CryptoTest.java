@@ -53,6 +53,7 @@ import java.util.List;
  * @library /
  * @build cryptotest.CryptoTest
  *        cryptotest.Settings
+ *        cryptotest.utils.AlgorithmIgnoredException
  *        cryptotest.tests.AlgorithmParameterGeneratorTests
  *        cryptotest.tests.AlgorithmParametersTests
  *        cryptotest.tests.CertificateFactoryTests
@@ -164,7 +165,7 @@ public class CryptoTest {
                 failures++;
             }
         }
-        System.out.println("Test runs: " + results.size() + "; failed :" + failures);
+        System.out.println("Test runs: " + results.size() + "; failed: " + failures);
         if (failures > 0) {
             throw new RuntimeException("Some tests failed: " + failures);
         }

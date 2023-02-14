@@ -30,6 +30,7 @@
  * @library /
  * @build cryptotest.tests.SecretKeyFactoryTests
  *        cryptotest.Settings
+ *        cryptotest.utils.AlgorithmIgnoredException
  *        cryptotest.utils.AlgorithmInstantiationException
  *        cryptotest.utils.AlgorithmRunException
  *        cryptotest.utils.AlgorithmTest
@@ -41,6 +42,7 @@
 
 package cryptotest.tests;
 
+import cryptotest.utils.AlgorithmIgnoredException;
 import cryptotest.utils.AlgorithmInstantiationException;
 import cryptotest.utils.AlgorithmRunException;
 import cryptotest.utils.AlgorithmTest;
@@ -113,7 +115,7 @@ public class SecretKeyFactoryTests extends AlgorithmTest {
             if (pkcs11fips
                 && (service.getAlgorithm().contains("PBE") || service.getAlgorithm().contains("PBKDF2"))) {
                 // current support for PBE and PBKDF2 in PKCS11 provider does not support translateKey
-                return;
+                 throw new AlgorithmIgnoredException();
             }
 
             if (secretKey == null || secretKeyFactory.translateKey(secretKey) == null) {
