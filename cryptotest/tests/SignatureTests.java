@@ -32,6 +32,7 @@
  * @library /
  * @build cryptotest.tests.SignatureTests
  *        cryptotest.Settings
+ *        cryptotest.utils.AlgorithmIgnoredException
  *        cryptotest.utils.AlgorithmInstantiationException
  *        cryptotest.utils.AlgorithmRunException
  *        cryptotest.utils.AlgorithmTest
@@ -42,6 +43,7 @@
 
 package cryptotest.tests;
 
+import cryptotest.utils.AlgorithmIgnoredException;
 import cryptotest.utils.AlgorithmInstantiationException;
 import cryptotest.utils.AlgorithmRunException;
 import cryptotest.utils.AlgorithmTest;
@@ -149,7 +151,7 @@ public class SignatureTests extends AlgorithmTest {
                 /* NOTABUG, see:
                    https://bugzilla.redhat.com/show_bug.cgi?id=1868744
                 */
-                return;
+                throw new AlgorithmIgnoredException();
             }
             throw new AlgorithmRunException(ex);
         }

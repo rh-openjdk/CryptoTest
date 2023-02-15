@@ -29,6 +29,7 @@
  * @library /
  * @build cryptotest.tests.SaslServerFactoryTests
  *        cryptotest.Settings
+ *        cryptotest.utils.AlgorithmIgnoredException
  *        cryptotest.utils.AlgorithmInstantiationException
  *        cryptotest.utils.AlgorithmRunException
  *        cryptotest.utils.AlgorithmTest
@@ -40,6 +41,7 @@
 package cryptotest.tests;
 
 import cryptotest.Settings;
+import cryptotest.utils.AlgorithmIgnoredException;
 import cryptotest.utils.AlgorithmInstantiationException;
 import cryptotest.utils.AlgorithmRunException;
 import cryptotest.utils.AlgorithmTest;
@@ -96,7 +98,8 @@ public class SaslServerFactoryTests extends AlgorithmTest {
                 }
             } else {
                 if (Settings.skipAgentTests) {
-                    return;
+                    // tests requiring agent skipped
+                    throw new AlgorithmIgnoredException();
                 }
                 if (debug) {
                     System.setProperty("sun.security.jgss.debug", "true");
