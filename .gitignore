@@ -26,3 +26,7 @@ hs_err_pid*
 
 # Directory with compiled classes made by Makefile
 classes
+
+# Jtreg dirs
+jtreg
+test.*

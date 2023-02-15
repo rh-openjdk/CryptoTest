@@ -15,6 +15,9 @@ while [ -h "$SCRIPT_SOURCE" ]; do # resolve $SOURCE until the file is no longer 
 done
 readonly SCRIPT_DIR="$( cd -P "$( dirname "$SCRIPT_SOURCE" )" && pwd )"
 
+set -e
+set -o pipefail
+
 JAVA=${1}
 if [ "x$JAVA" == "x" ] ; then 
   echo "Jdk is mandatory param (bugid is optional)"
@@ -42,9 +45,14 @@ else
 fi
 
 if [ ! -e "$JTREG_HOME" ] ; then
-  ball=jtreg-7+1.tar.gz
+  ball=jtreg5.1-b01.tar.gz
   wget https://ci.adoptopenjdk.net/view/Dependencies/job/dependency_pipeline/lastSuccessfulBuild/artifact/jtreg/$ball
   tar -xf $ball
+fi
+
+AGENT_OPT=""
+if [ -n "${SKIP_AGENT_TESTS:-}" ] ; then
+    AGENT_OPT="-javaoption:-Dcryptotests.skipAgentTests=1"
 fi
 
 echo Running with $JAVA...
@@ -55,7 +63,17 @@ ${JAVA_HOME}/bin/java -jar $JTREG_HOME/lib/jtreg.jar -v1 -a -ignore:quiet \
 		-jdk:$JAVA \
 		-xml \
 		$BUGID \
+		$AGENT_OPT \
 		$SCRIPT_DIR \
 	    | tee test.${TIME}/tests.log
 
 tar -czf test.${TIME}.tar.gz test.${TIME}/jdk/JTwork test.${TIME}/jdk/JTreport
+
+if ! [ -f test.${TIME}/tests.log ] ; then
+	echo "Missing tests.log!" 1>&2
+	exit 1
+fi
+# passes should be present in tests.log
+grep -Eqi '^passed:' test.${TIME}/tests.log || exit 1
+# check for failures/errors in tests.log 
+! grep -Eqi '^(failed|error):' test.${TIME}/tests.log || exit 1
