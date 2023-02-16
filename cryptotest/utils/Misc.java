@@ -189,4 +189,16 @@ public class Misc {
             }
         };
     }
+
+    // Based on:
+    // https://github.com/openjdk/jdk/blob/9b911b492f56fbf94682535a1d20dde07c62940f/test/jdk/sun/security/mscapi/AllTypes.java#L55
+    public static boolean hasWindowsAdmin() {
+        try {
+            Process p = Runtime.getRuntime().exec("reg query \"HKU\\S-1-5-19\"");
+            p.waitFor();
+            return (p.exitValue() == 0);
+        } catch (Exception ex) {}
+        return false;
+    }
+
 }
