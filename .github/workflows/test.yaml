@@ -57,6 +57,73 @@ jobs:
       - name: Run
         run: make SKIP_AGENT_TESTS=1 all
 
+  test-jdk8-win:
+    name: "Test JDK8 Windows"
+    runs-on: "windows-latest"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 8
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: make
+      - name: Build
+        shell: msys2 {0}
+        run: make classes
+      - name: Run
+        shell: msys2 {0}
+        run: make SKIP_AGENT_TESTS=1 all
+
+  test-jdk11-win:
+    name: "Test JDK11 Windows"
+    runs-on: "windows-latest"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 11
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: make
+      - name: Build
+        shell: msys2 {0}
+        run: make classes
+      - name: Run
+        shell: msys2 {0}
+        run: make SKIP_AGENT_TESTS=1 all
+
+  test-jdk17-win:
+    name: "Test JDK17 Windows"
+    runs-on: "windows-latest"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: make
+      - name: Build
+        shell: msys2 {0}
+        run: make classes
+      - name: Run
+        shell: msys2 {0}
+        run: make SKIP_AGENT_TESTS=1 all
+
+
   test-jdk8-jtreg:
     name: "Test JDK8 Jtreg"
     runs-on: "ubuntu-latest"
