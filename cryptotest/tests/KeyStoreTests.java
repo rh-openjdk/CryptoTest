@@ -29,18 +29,22 @@
  * @library /
  * @build cryptotest.tests.KeyStoreTests
  *        cryptotest.Settings
+ *        cryptotest.utils.AlgorithmIgnoredException
  *        cryptotest.utils.AlgorithmInstantiationException
  *        cryptotest.utils.AlgorithmRunException
  *        cryptotest.utils.AlgorithmTest
+ *        cryptotest.utils.Misc
  *        cryptotest.utils.TestResult
  * @run main/othervm cryptotest.tests.KeyStoreTests
  */
 
 package cryptotest.tests;
 
+import cryptotest.utils.AlgorithmIgnoredException;
 import cryptotest.utils.AlgorithmInstantiationException;
 import cryptotest.utils.AlgorithmRunException;
 import cryptotest.utils.AlgorithmTest;
+import cryptotest.utils.Misc;
 import cryptotest.utils.TestResult;
 import java.io.IOException;
 import java.security.*;
@@ -64,6 +68,13 @@ public class KeyStoreTests extends AlgorithmTest {
     @Override
     protected void checkAlgorithm(Provider.Service service, String alias) throws AlgorithmInstantiationException, AlgorithmRunException {
         try {
+            if (service.getProvider().getName().equals("SunMSCAPI")
+                && alias.toUpperCase().endsWith("-LOCALMACHINE")
+                && !Misc.hasWindowsAdmin()) {
+                // SunMCAPI *-LOCALMACHINE keystores require Admin privileges:
+                // https://github.com/openjdk/jdk/blob/9b911b492f56fbf94682535a1d20dde07c62940f/test/jdk/sun/security/mscapi/AllTypes.java#L48
+                throw new AlgorithmIgnoredException();
+            }
             KeyStore ks = KeyStore.getInstance(alias, service.getProvider());
             char[] pw = new char[]{'a', 'b'};
             if (alias.startsWith("PKCS11")) {
