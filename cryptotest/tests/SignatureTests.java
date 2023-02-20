@@ -80,7 +80,7 @@ public class SignatureTests extends AlgorithmTest {
                 && service.getAlgorithm().contains("SHA3-")) {
                 // skip: NSS does not support SHA3 (yet)
                 // See: https://issues.redhat.com/browse/OPENJDK-826
-                return;
+                throw new AlgorithmIgnoredException();
             }
             Signature sig = Signature.getInstance(alias, service.getProvider());
             //most of them are happy with rsa...
