@@ -29,6 +29,7 @@
  * @library /
  * @build cryptotest.tests.CertStoreTests
  *        cryptotest.Settings
+ *        cryptotest.utils.AlgorithmIgnoredException
  *        cryptotest.utils.AlgorithmInstantiationException
  *        cryptotest.utils.AlgorithmRunException
  *        cryptotest.utils.AlgorithmTest
@@ -38,6 +39,7 @@
 
 package cryptotest.tests;
 
+import cryptotest.utils.AlgorithmIgnoredException;
 import cryptotest.utils.AlgorithmInstantiationException;
 import cryptotest.utils.AlgorithmRunException;
 import cryptotest.utils.AlgorithmTest;
@@ -73,7 +75,7 @@ public class CertStoreTests extends AlgorithmTest {
             if (alias.equals("LDAP")) {
                 p = new LDAPCertStoreParameters();
                 //this needs ldap server to finish
-                return;
+                throw new AlgorithmIgnoredException();
             } else {
                 p = new CollectionCertStoreParameters();
             }
@@ -99,6 +101,8 @@ public class CertStoreTests extends AlgorithmTest {
                 throw new AlgorithmRunException(new RuntimeException("Was nto possible to iterate through certstore"));
             }
             printResult(Arrays.toString(cl.toArray()));
+        } catch (AlgorithmIgnoredException aie) {
+            throw aie;
         } catch (NoSuchAlgorithmException ex) {
             throw new AlgorithmInstantiationException(ex);
         } catch (Exception ex) {
