@@ -27,7 +27,7 @@ jobs:
           - jdkconf: JDK 17
             jdkver: "17"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -56,7 +56,7 @@ jobs:
           - jdkconf: JDK 17
             jdkver: "17"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
@@ -92,7 +92,7 @@ jobs:
           - jdkconf: JDK 17
             jdkver: "17"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
