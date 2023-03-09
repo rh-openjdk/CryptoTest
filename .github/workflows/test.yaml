@@ -7,6 +7,8 @@ on:
   push:
     branches:
       - "*"
+env:
+  jdk_latest: 19
 
 jobs:
   test-linux:
@@ -19,6 +21,7 @@ jobs:
           - JDK 8
           - JDK 11
           - JDK 17
+          - JDK Latest
         include:
           - jdkconf: JDK 8
             jdkver: "8"
@@ -32,7 +35,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: ${{ matrix.jdkver }}
+          java-version: ${{ matrix.jdkver || env.jdk_latest }}
       - name: Build
         run: make classes
       - name: Run
@@ -48,6 +51,7 @@ jobs:
           - JDK 8
           - JDK 11
           - JDK 17
+          - JDK Latest
         include:
           - jdkconf: JDK 8
             jdkver: "8"
@@ -61,7 +65,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: ${{ matrix.jdkver }}
+          java-version: ${{ matrix.jdkver || env.jdk_latest }}
       - uses: msys2/setup-msys2@v2
         with:
           update: true
@@ -84,6 +88,7 @@ jobs:
           - JDK 8
           - JDK 11
           - JDK 17
+          - JDK Latest
         include:
           - jdkconf: JDK 8
             jdkver: "8"
@@ -97,6 +102,6 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: ${{ matrix.jdkver }}
+          java-version: ${{ matrix.jdkver || env.jdk_latest }}
       - name: Run
         run: SKIP_AGENT_TESTS=1 ./run.sh "${JAVA_HOME}"
