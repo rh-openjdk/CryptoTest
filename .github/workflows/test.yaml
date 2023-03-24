@@ -8,7 +8,7 @@ on:
     branches:
       - "*"
 env:
-  jdk_latest: 19
+  jdk_latest: 20
 
 jobs:
   test-linux:
