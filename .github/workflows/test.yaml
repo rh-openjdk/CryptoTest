@@ -77,6 +77,33 @@ jobs:
         shell: msys2 {0}
         run: make SKIP_AGENT_TESTS=1 all
 
+  test-macos:
+    name: "MacOS"
+    runs-on: "macos-latest"
+    strategy:
+      fail-fast: false
+      matrix:
+        jdkconf:
+          - JDK 8
+          - JDK 11
+          - JDK 17
+          - JDK Latest
+        include:
+          - jdkconf: JDK 8
+            jdkver: "8"
+          - jdkconf: JDK 11
+            jdkver: "11"
+          - jdkconf: JDK 17
+            jdkver: "17"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.jdkver || env.jdk_latest }}
+      - name: Run
+        run: make SKIP_AGENT_TESTS=1 all
 
   test-linux-jtreg:
     name: "Linux Jtreg"
