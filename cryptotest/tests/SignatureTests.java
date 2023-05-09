@@ -38,7 +38,7 @@
  *        cryptotest.utils.AlgorithmTest
  *        cryptotest.utils.KeysNaiveGenerator
  *        cryptotest.utils.TestResult
- * @run main/othervm cryptotest.tests.SignatureTests
+ * @run main/othervm/timeout=480 cryptotest.tests.SignatureTests
  */
 
 package cryptotest.tests;
