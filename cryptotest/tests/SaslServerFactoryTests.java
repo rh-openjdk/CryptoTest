@@ -97,10 +97,7 @@ public class SaslServerFactoryTests extends AlgorithmTest {
                             String.format("server null, provider '%s' and alias '%s'", service.getAlgorithm(), alias)));
                 }
             } else {
-                if (Settings.skipAgentTests) {
-                    // tests requiring agent skipped
-                    throw new AlgorithmIgnoredException();
-                }
+                Misc.checkAgentConfig();
                 if (debug) {
                     System.setProperty("sun.security.jgss.debug", "true");
                     System.setProperty("sun.security.krb5.debug", "true");

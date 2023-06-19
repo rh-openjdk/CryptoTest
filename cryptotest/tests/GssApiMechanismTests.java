@@ -98,10 +98,7 @@ public class GssApiMechanismTests extends AlgorithmTest {
 
     @Override
     protected void checkAlgorithm(final Provider.Service service, final String alias) throws AlgorithmInstantiationException, AlgorithmRunException {
-        if (Settings.skipAgentTests) {
-            // tests requiring agent skipped
-            throw new AlgorithmIgnoredException();
-        }
+        Misc.checkAgentConfig();
         try {
             if (debug) {
                 System.setProperty("sun.security.jgss.debug", "true");

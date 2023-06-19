@@ -120,6 +120,17 @@ public class Misc {
         return agentDomain;
     }
 
+    public static void checkAgentConfig() {
+        if (Settings.skipAgentTests) {
+            // tests requiring agent skipped
+            throw new AlgorithmIgnoredException();
+        }
+        if (getAgentHostName() == null) {
+            // agent hostname not configured, fail
+            throw new RuntimeException("Agent hostname not configured, see README.md for help.");
+        }
+    }
+
     public static File createTmpKrb5File() {
         File f = null;
         try {
