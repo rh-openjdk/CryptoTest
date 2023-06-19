@@ -11,6 +11,7 @@ JAVAC_MOD_ARGS := $(shell [ $(JAVA_VERSION_MAJOR) -le 8 ] && printf '%s' '-XDign
 TESTS_EXCLUDE := $(shell printf '%s' ".*[.]sh" ;  )
 
 SKIP_AGENT_TESTS_ARG := $(shell [ 1 = "$(SKIP_AGENT_TESTS)" ] && printf '%s' '-Dcryptotests.skipAgentTests=1' )
+AGENT_HOSTNAME_ARG := $(shell [ -n "$(AGENT_HOSTNAME)" ] && printf '%s=%s' '-Dcryptotests.agentHostName' "$(AGENT_HOSTNAME)" )
 
 TEST_NAMES := $(patsubst cryptotest/tests/%Tests.java,%Tests,$(wildcard cryptotest/tests/*Tests.java))
 
@@ -27,10 +28,10 @@ classes:
 	cp cryptotest/tests/test.jks classes/cryptotest/tests
 
 CryptoTest: | classes
-	$(JAVA) $(JAVA_MOD_ARGS) -cp classes $(SKIP_AGENT_TESTS_ARG) cryptotest.CryptoTest
+	$(JAVA) $(JAVA_MOD_ARGS) -cp classes $(SKIP_AGENT_TESTS_ARG) $(AGENT_HOSTNAME_ARG) cryptotest.CryptoTest
 
 list-tests:
 	@printf '%s\n' $(TEST_NAMES) | tr ' ' '\n' | sort
 
 $(TEST_NAMES): | classes
-	$(JAVA) $(JAVA_MOD_ARGS) -cp classes $(SKIP_AGENT_TESTS_ARG) cryptotest.tests.$@
+	$(JAVA) $(JAVA_MOD_ARGS) -cp classes $(SKIP_AGENT_TESTS_ARG) $(AGENT_HOSTNAME_ARG) cryptotest.tests.$@

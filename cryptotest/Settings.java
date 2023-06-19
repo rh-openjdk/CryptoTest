@@ -40,6 +40,8 @@ public class Settings {
         return defaultValue;
     }
 
+    public static String agentHostName = System.getProperty("cryptotests.agentHostName");
+
     public static boolean skipAgentTests = getBooleanProperty("cryptotests.skipAgentTests", false);
     //not only names of algorithms will be invoked, but also all aliases. Number of tests multiply by aprox 3, but right thing to do
     public static boolean testAliases = true;

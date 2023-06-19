@@ -105,11 +105,19 @@ public class Misc {
     }
 
     public static String getAgentHostName() {
-        return "agent.brq." + getAgentDomain();
+        return Settings.agentHostName;
     }
 
     public static String getAgentDomain() {
-        return "redhat.com";
+        String agentDomain = getAgentHostName();
+        if (agentDomain != null) {
+            int index = agentDomain.lastIndexOf('.');
+            index = agentDomain.lastIndexOf('.', index - 1);
+            if (index >= 0) {
+                agentDomain = agentDomain.substring(index + 1);
+            }
+        }
+        return agentDomain;
     }
 
     public static File createTmpKrb5File() {
