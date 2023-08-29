@@ -79,6 +79,11 @@ public class SignatureTests extends AlgorithmTest {
                 // See: https://issues.redhat.com/browse/OPENJDK-826
                 throw new AlgorithmIgnoredException();
             }
+            if (service.getAlgorithm().equals("HSS/LMS")) {
+                // Signing is not supported (only verification) -> skip
+                // See: https://github.com/openjdk/jdk/blob/a4e97aa4ebe6fcfc3ed9e45ed81df1d55e52d621/src/java.base/share/classes/sun/security/provider/HSS.java#L61
+                throw new AlgorithmIgnoredException();
+            }
             Signature sig = Signature.getInstance(alias, service.getProvider());
             //most of them are happy with rsa...
             PrivateKey key = getRsaPrivateKey(service.getProvider());

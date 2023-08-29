@@ -89,6 +89,10 @@ public class KeyFactoryTests extends AlgorithmTest {
                 // keygens for these are not available -> skip
                 throw new AlgorithmIgnoredException();
             }
+            if (service.getAlgorithm().equals("HSS/LMS")) {
+                // no key generators available for HSS/LMS
+                throw new AlgorithmIgnoredException();
+            }
 
             if (service.getAlgorithm().equals("Ed25519") || service.getAlgorithm().equals("EdDSA") || service.getAlgorithm().equals("Ed448")) {
                 KeyPairGenerator kpg = KeysNaiveGenerator.getKeyPairGenerator(service.getAlgorithm(), p);
