@@ -55,9 +55,6 @@ import javax.crypto.spec.PBEParameterSpec;
 import javax.crypto.spec.PSource;
 import javax.crypto.spec.RC2ParameterSpec;
 
-/*
- * IwishThisCouldBeAtTest
- */
 public class AlgorithmParametersTests extends AlgorithmTest {
 
     public static void main(String[] args) {

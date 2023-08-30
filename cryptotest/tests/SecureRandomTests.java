@@ -48,9 +48,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.ProviderException;
 
-/*
- * IwishThisCouldBeAtTest
- */
 public class SecureRandomTests extends AlgorithmTest {
 
     /**

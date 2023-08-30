@@ -60,9 +60,6 @@ import java.util.Map;
 
 import static cryptotest.utils.KeysNaiveGenerator.*;
 
-/*
- * IwishThisCouldBeAtTest
- */
 public class CipherTests extends AlgorithmTest {
 
     /**

@@ -53,9 +53,6 @@ import java.security.cert.LDAPCertStoreParameters;
 import java.util.Arrays;
 import java.util.Collection;
 
-/*
- * IwishThisCouldBeAtTest
- */
 public class CertStoreTests extends AlgorithmTest {
 
     /**

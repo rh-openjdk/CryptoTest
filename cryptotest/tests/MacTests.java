@@ -54,9 +54,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
 import javax.crypto.spec.PBEParameterSpec;
 
-/*
- * IwishThisCouldBeAtTest
- */
 public class MacTests extends AlgorithmTest {
 
     /**

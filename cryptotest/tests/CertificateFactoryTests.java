@@ -51,9 +51,6 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 
-/*
- * IwishThisCouldBeAtTest
- */
 public class CertificateFactoryTests extends AlgorithmTest {
 
     /* 

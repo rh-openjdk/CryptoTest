@@ -45,9 +45,6 @@ import cryptotest.utils.TestResult;
 
 import java.security.*;
 
-/*
- * IwishThisCouldBeAtTest
- */
 public class MessageDigestTests extends AlgorithmTest {
 
     /**
