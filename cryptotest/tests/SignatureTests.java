@@ -58,9 +58,6 @@ import java.security.*;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
 
-/*
- * IwishThisCouldBeAtTest
- */
 public class SignatureTests extends AlgorithmTest {
 
     /**

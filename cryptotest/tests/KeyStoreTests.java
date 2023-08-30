@@ -50,9 +50,6 @@ import java.io.IOException;
 import java.security.*;
 import java.security.cert.CertificateException;
 
-/*
- * IwishThisCouldBeAtTest
- */
 public class KeyStoreTests extends AlgorithmTest {
 
     /**

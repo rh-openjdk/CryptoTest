@@ -80,9 +80,6 @@ import java.security.Provider;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/*
- * IwishThisCouldBeAtTest
- */
 public class GssApiMechanismTests extends AlgorithmTest {
 
     /**

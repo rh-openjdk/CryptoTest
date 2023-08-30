@@ -56,9 +56,6 @@ import sun.security.internal.spec.TlsMasterSecretParameterSpec;
 import sun.security.internal.spec.TlsPrfParameterSpec;
 import sun.security.internal.spec.TlsRsaPremasterSecretParameterSpec;
 
-/*
- * IwishThisCouldBeAtTest
- */
 public class KeyGeneratorTests extends AlgorithmTest {
 
     /**
