@@ -87,7 +87,7 @@ import java.util.Set;
  *        cryptotest.tests.TestServices
  *        cryptotest.tests.TransformServiceTests
  *        cryptotest.tests.TrustManagerFactoryTests
- *        cryptotest.tests.XMLSignatureFactoryTest
+ *        cryptotest.tests.XMLSignatureFactoryTests
  *        cryptotest.utils.AlgorithmInstantiationException
  *        cryptotest.utils.AlgorithmRunException
  *        cryptotest.utils.AlgorithmTest

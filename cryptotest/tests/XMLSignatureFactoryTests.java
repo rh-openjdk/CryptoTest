@@ -27,13 +27,13 @@
  * @modules java.base/java.security:open
  * @bug 1422738
  * @library /
- * @build cryptotest.tests.XMLSignatureFactoryTest
+ * @build cryptotest.tests.XMLSignatureFactoryTests
  *        cryptotest.Settings
  *        cryptotest.utils.AlgorithmInstantiationException
  *        cryptotest.utils.AlgorithmRunException
  *        cryptotest.utils.AlgorithmTest
  *        cryptotest.utils.TestResult
- * @run main/othervm cryptotest.tests.XMLSignatureFactoryTest
+ * @run main/othervm cryptotest.tests.XMLSignatureFactoryTests
  */
 
 package cryptotest.tests;
@@ -82,10 +82,10 @@ import org.w3c.dom.Element;
  *
  * @author oklinovs
  */
-public class XMLSignatureFactoryTest extends AlgorithmTest {
+public class XMLSignatureFactoryTests extends AlgorithmTest {
 
     public static void main(String[] args) {
-        TestResult r = new XMLSignatureFactoryTest().mainLoop();
+        TestResult r = new XMLSignatureFactoryTests().mainLoop();
         System.out.println(r.getExplanation());
         System.out.println(r.toString());
         r.assertItself();
