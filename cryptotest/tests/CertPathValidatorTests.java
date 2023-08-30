@@ -101,10 +101,11 @@ public class CertPathValidatorTests extends AlgorithmTest {
 
     private void loadKeyStore() throws KeyStoreException, IOException,
             NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException {
-        InputStream is = CertPathValidatorTests.class.getResourceAsStream("test.jks");
-        KeyStore caKs = KeyStore.getInstance("JKS");
-        caKs.load(is, "password".toCharArray());
-        caStore = caKs;
+        try (InputStream is = CertPathValidatorTests.class.getResourceAsStream("test.jks")) {
+            KeyStore caKs = KeyStore.getInstance("JKS");
+            caKs.load(is, "password".toCharArray());
+            caStore = caKs;
+        }
     }
 
     private List<X509Certificate> getCertificates() throws KeyStoreException, IOException,

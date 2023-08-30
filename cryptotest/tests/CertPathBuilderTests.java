@@ -88,9 +88,10 @@ public class CertPathBuilderTests extends AlgorithmTest {
         try {
             CertPathBuilder certPathBuilder = CertPathBuilder.getInstance(alias, service.getProvider());
 
-            InputStream is = CertPathValidatorTests.class.getResourceAsStream("test.jks");
             KeyStore ks = KeyStore.getInstance("JKS");
-            ks.load(is, "password".toCharArray());
+            try (InputStream is = CertPathValidatorTests.class.getResourceAsStream("test.jks")) {
+                ks.load(is, "password".toCharArray());
+            }
 
             Certificate serverCrt = ks.getCertificate("server");
             Certificate caCrt = ks.getCertificate("ca");
