@@ -26,6 +26,7 @@
  * @test
  * @requires jdk.version.major >= 21
  * @modules java.base/java.security:open
+ *          java.base/sun.security.internal.spec
  * @bug 6666666
  * @library /
  * @build cryptotest.tests.KEMTests
