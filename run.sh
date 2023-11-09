@@ -73,14 +73,13 @@ echo Running with $JAVA...
 r=0
 mkdir -p test.${TIME}/jdk/JTwork test.${TIME}/jdk/JTreport
 ${JAVA_HOME}/bin/java -jar $JTREG_HOME/lib/jtreg.jar -v1 -a -ignore:quiet \
-		-w:test.${TIME}/jdk/JTwork -r:test.${TIME}/jdk/JTreport \
-		-jdk:$JAVA \
-		-xml \
-		$BUGID \
-		$AGENT_OPT \
-                $envVarArg \
-		$FOLDER \
-	    | tee test.${TIME}/tests.log || r=$?
+  -w:test.${TIME}/jdk/JTwork -r:test.${TIME}/jdk/JTreport \
+  -jdk:$JAVA \
+  -xml \
+  $BUGID \
+  $AGENT_OPT \
+  $envVarArg \
+  $FOLDER | tee test.${TIME}/tests.log || r=$?
 
 tar -czf test.${TIME}.tar.gz test.${TIME}/jdk/JTwork test.${TIME}/jdk/JTreport
 
