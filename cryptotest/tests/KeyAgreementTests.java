@@ -27,7 +27,6 @@
  * @modules java.base/java.security:open
  *          java.base/com.sun.crypto.provider
  *          java.base/sun.security.internal.spec
- *          jdk.crypto.ec/sun.security.ec
  * @bug 1422738
  * @library /
  * @build cryptotest.tests.KeyAgreementTests
@@ -52,8 +51,6 @@ import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import javax.crypto.KeyAgreement;
-import com.sun.crypto.provider.DHKeyPairGenerator;
-import sun.security.ec.ECKeyPairGenerator;
 import cryptotest.utils.KeysNaiveGenerator;
 import cryptotest.utils.Misc;
 
