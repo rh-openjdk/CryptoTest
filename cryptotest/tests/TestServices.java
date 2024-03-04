@@ -51,7 +51,6 @@ import java.util.Set;
  *          java.security.jgss/sun.security.krb5
  *          java.smartcardio/javax.smartcardio
  *          java.xml.crypto/org.jcp.xml.dsig.internal.dom
- *          jdk.crypto.ec/sun.security.ec
  * @bug 6666666
  * @library /
  * @build cryptotest.CryptoTest
