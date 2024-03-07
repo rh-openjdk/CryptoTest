@@ -62,6 +62,9 @@ TIME=$(date +%s)
 BUGID="${2}"
 
 FOLDER="${SCRIPT_DIR}"
+if [ "x$CYGWIN" == "xtrue" ] ; then
+  FOLDER="$(cygpath -aw "${FOLDER}")"
+fi
 if [ "x$BUGID" != "x" -a -e "$BUGID" ] ; then
     FOLDER="$BUGID"
     BUGID=""

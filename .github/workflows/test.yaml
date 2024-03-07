@@ -7,105 +7,9 @@ on:
   push:
     branches:
       - "*"
-env:
-  jdk_latest: 21
 
 jobs:
   test-linux:
-    name: "Linux"
-    runs-on: "ubuntu-latest"
-    strategy:
-      fail-fast: false
-      matrix:
-        jdkconf:
-          - JDK 8
-          - JDK 11
-          - JDK 17
-          - JDK Latest
-        include:
-          - jdkconf: JDK 8
-            jdkver: "8"
-          - jdkconf: JDK 11
-            jdkver: "11"
-          - jdkconf: JDK 17
-            jdkver: "17"
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: ${{ matrix.jdkver || env.jdk_latest }}
-      - name: Build
-        run: make classes
-      - name: Run
-        run: make SKIP_AGENT_TESTS=1 all
-
-  test-win:
-    name: "Windows"
-    runs-on: "windows-latest"
-    strategy:
-      fail-fast: false
-      matrix:
-        jdkconf:
-          - JDK 8
-          - JDK 11
-          - JDK 17
-          - JDK Latest
-        include:
-          - jdkconf: JDK 8
-            jdkver: "8"
-          - jdkconf: JDK 11
-            jdkver: "11"
-          - jdkconf: JDK 17
-            jdkver: "17"
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: ${{ matrix.jdkver || env.jdk_latest }}
-      - uses: msys2/setup-msys2@v2
-        with:
-          update: true
-          install: make
-      - name: Build
-        shell: msys2 {0}
-        run: make classes
-      - name: Run
-        shell: msys2 {0}
-        run: make SKIP_AGENT_TESTS=1 all
-
-  test-macos:
-    name: "MacOS"
-    runs-on: "macos-latest"
-    strategy:
-      fail-fast: false
-      matrix:
-        jdkconf:
-          - JDK 8
-          - JDK 11
-          - JDK 17
-          - JDK Latest
-        include:
-          - jdkconf: JDK 8
-            jdkver: "8"
-          - jdkconf: JDK 11
-            jdkver: "11"
-          - jdkconf: JDK 17
-            jdkver: "17"
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: ${{ matrix.jdkver || env.jdk_latest }}
-      - name: Run
-        run: make SKIP_AGENT_TESTS=1 all
-
-  test-linux-jtreg:
     name: "Linux Jtreg"
     runs-on: "ubuntu-latest"
     strategy:
@@ -115,6 +19,7 @@ jobs:
           - JDK 8
           - JDK 11
           - JDK 17
+          - JDK 21
           - JDK Latest
         include:
           - jdkconf: JDK 8
@@ -123,12 +28,144 @@ jobs:
             jdkver: "11"
           - jdkconf: JDK 17
             jdkver: "17"
+          - jdkconf: JDK 21
+            jdkver: "21"
+          - jdkconf: JDK Latest
+            jdkver: "21"
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: ${{ matrix.jdkver || env.jdk_latest }}
+          java-version: ${{ matrix.jdkver}}
       - name: Run
         run: SKIP_AGENT_TESTS=1 ./run.sh "${JAVA_HOME}"
+      - name: Upload results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          path: "test.*.tar.gz"
+
+  test-macos:
+    name: "MacOS Jtreg"
+    runs-on: "macos-latest"
+    strategy:
+      fail-fast: false
+      matrix:
+        jdkconf:
+          - JDK 8
+          - JDK 11
+          - JDK 17
+          - JDK 21
+        include:
+          - jdkconf: JDK 8
+            jdkver: "8"
+          - jdkconf: JDK 11
+            jdkver: "11"
+          - jdkconf: JDK 17
+            jdkver: "17"
+          - jdkconf: JDK 21
+            jdkver: "21"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.jdkver}}
+      - name: Run
+        run: SKIP_AGENT_TESTS=1  ./run.sh "${JAVA_HOME}"
+      - name: Upload results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          path: "test.*.tar.gz"
+
+  test-windows-cygwin:
+    name: "Windows-cygwin Jtreg"
+    runs-on: "windows-latest"
+    defaults:
+      run:
+        shell: C:\tools\cygwin\bin\bash.exe --login --norc -o igncr '{0}'
+    strategy:
+      fail-fast: false
+      matrix:
+        jdkconf:
+          - JDK 8
+          - JDK 11
+          - JDK 17
+          - JDK 21
+        include:
+          - jdkconf: JDK 8
+            jdkver: "8"
+          - jdkconf: JDK 11
+            jdkver: "11"
+          - jdkconf: JDK 17
+            jdkver: "17"
+          - jdkconf: JDK 21
+            jdkver: "21"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Cygwin
+        uses: egor-tensin/setup-cygwin@v4
+        with:
+          packages: wget tar bash dos2unix
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.jdkver}}
+      - name: Run
+        run: |
+             set -ex
+             cd "$GITHUB_WORKSPACE" ; pwd; ls -l
+             echo "it seems default shell do not honour -o igncr nor --norc"
+             dos2unix -v run.sh
+             find cryptotest -type f  -name "*.sh" -exec dos2unix -v {} \;
+             bash.exe --login --norc -o igncr -c "cd \"$GITHUB_WORKSPACE\" && SKIP_AGENT_TESTS=1 ./run.sh \"${JAVA_HOME}\""
+      - name: Upload results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          path: "test.*.tar.gz"
+
+  test-windows-msys2:
+    name: "Windows-msys2 Jtreg"
+    runs-on: "windows-latest"
+    strategy:
+      fail-fast: false
+      matrix:
+        jdkconf:
+          - JDK 8
+          - JDK 11
+          - JDK 17
+          - JDK 21
+        include:
+          - jdkconf: JDK 8
+            jdkver: "8"
+          - jdkconf: JDK 11
+            jdkver: "11"
+          - jdkconf: JDK 17
+            jdkver: "17"
+          - jdkconf: JDK 21
+            jdkver: "21"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.jdkver}}
+      - uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: wget tar
+      - name: Prepare env
+        shell: msys2 {0}
+        run: SKIP_AGENT_TESTS=1 ./run.sh "${JAVA_HOME}"
+      - name: Upload results
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          path: "test.*.tar.gz"
