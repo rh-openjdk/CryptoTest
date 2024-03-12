@@ -17,6 +17,8 @@ while [ -h "$SCRIPT_SOURCE" ]; do # resolve $SOURCE until the file is no longer 
 done
 readonly SCRIPT_DIR="$( cd -P "$( dirname "$SCRIPT_SOURCE" )" && pwd )"
 
+pushd ${SCRIPT_DIR}
+
 OS=`uname -s`
 CYGWIN="false"
 case "$OS" in
@@ -132,10 +134,18 @@ mkdir -p test.${TIME}/jdk/JTwork test.${TIME}/jdk/JTreport
 
 tar -czf test.${TIME}.tar.gz test.${TIME}/jdk/JTwork test.${TIME}/jdk/JTreport
 
+popd
+
+if [ ! `readlink -f ${SCRIPT_DIR}` == `pwd`  ] ; then
+    mv ${SCRIPT_DIR}/test.${TIME} .
+    mv -v  ${SCRIPT_DIR}/test.${TIME}.tar.gz .
+fi
+
 if ! [ -f test.${TIME}/tests.log ] ; then
 	echo "Missing tests.log!" 1>&2
 	exit 1
 fi
+
 # passes should be present in tests.log
 grep -Eqi '^passed:' test.${TIME}/tests.log || exit 1
 # check for failures/errors in tests.log 
