@@ -102,8 +102,8 @@ if [ ! -e "$JTREG_HOME" ] ; then
     ball=jtreg-6+1.tar.gz
     wget "https://github.com/andrlos/jtreg/releases/download/6.1-jtrfix-V01.0/$ball"
   else
-    ball=jtreg-7.3+1.tar.gz
-    wget "https://ci.adoptopenjdk.net/view/Dependencies/job/dependency_pipeline/lastSuccessfulBuild/artifact/jtreg/$ball"
+    ball=jtreg-7.3.1+1-jtrfix.tar.gz
+    wget "https://github.com/andrlos/jtreg/releases/download/7.3.1%2B1-jtrfix-V01.0/$ball"
   fi
   tar -xf $ball
 fi
