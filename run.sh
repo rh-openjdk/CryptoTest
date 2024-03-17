@@ -74,6 +74,16 @@ elif [ "x$BUGID" != "x" ]; then
   BUGID="-bug:$BUGID"
 fi
 
+if [ ! "x$FORCE_TMP_JTREG" == "x" ] ; then
+   ddir=`mktemp -d`
+   pushd "$ddir"
+     ball=forcedJtreg.tar.gz
+     wget "$FORCE_TMP_JTREG" -O "$ball"
+     tar -xf "$ball"
+   popd
+  JTREG_HOME="$ddir/jtreg"
+fi
+
 if [ "x$JTREG_HOME" == "x" ] ; then
   JTREG_HOME="$SCRIPT_DIR/jtreg"
 else
