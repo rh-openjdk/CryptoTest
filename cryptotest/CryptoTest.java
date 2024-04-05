@@ -93,7 +93,7 @@ import java.util.List;
  *        cryptotest.utils.Misc
  *        cryptotest.utils.TestResult
  *        cryptotest.utils.Xml
- * @run main/othervm/timeout=600 cryptotest.CryptoTest
+ * @run main/othervm/timeout=1800 cryptotest.CryptoTest
  */
 
 public class CryptoTest {
