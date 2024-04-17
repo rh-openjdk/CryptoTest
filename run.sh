@@ -131,8 +131,8 @@ if [ "x$CYGWIN" == "xtrue" ] ; then
   JTREG_JAR="$(cygpath -aw "${JTREG_JAR}")"
 fi
 
-jtWork="test.${TIME}/jdk/JTwork"
-jtReport="test.${TIME}/jdk/JTreport"
+jtWork="test.${TIME}/jdk/work"
+jtReport="test.${TIME}/jdk/report"
 
 r=0
 mkdir -p "${jtWork}" "${jtReport}"
