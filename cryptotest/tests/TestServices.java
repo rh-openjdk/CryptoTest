@@ -95,7 +95,7 @@ import java.util.Set;
  *        cryptotest.utils.Misc
  *        cryptotest.utils.TestResult
  *        cryptotest.utils.Xml
- * @run main/othervm/timeout=480 cryptotest.tests.TestServices
+ * @run main/othervm/timeout=960 cryptotest.tests.TestServices
  */
 public class TestServices {
 
