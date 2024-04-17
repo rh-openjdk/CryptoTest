@@ -145,13 +145,13 @@ mkdir -p "${jtWork}" "${jtReport}"
   $envVarArg \
   $FOLDER | tee test.${TIME}/tests.log || r=$?
 
-tar -czf test.${TIME}.tar.gz "${jtWork}" "${jtReport}"
+tar -czf test.${TIME}.tar.gz "${jtWork}" "${jtReport}" || echo "Packing of results tarball failed"
 
 popd
 
 if [ ! `readlink -f ${SCRIPT_DIR}` == `pwd`  ] ; then
     mv ${SCRIPT_DIR}/test.${TIME} .
-    mv -v  ${SCRIPT_DIR}/test.${TIME}.tar.gz .
+    mv -v  ${SCRIPT_DIR}/test.${TIME}.tar.gz . || echo "Moving of results tarball failed"
 fi
 
 if ! [ -f test.${TIME}/tests.log ] ; then
