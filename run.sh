@@ -32,6 +32,8 @@ case "$OS" in
     ;;
 esac
 
+READLINK_F="-f"
+readlink $READLINK_F "." || READLINK_F=""
 
 envVarArg="-e:CUSTOM_DUMMY_VARIABLE=true,JAVA_TOOL_OPTIONS,OTOOL_BUILD_ARCH,DISPLAY"
 keys=$(env | grep OTOOL_ | sed "s/=.*//")
@@ -53,7 +55,7 @@ if [ "x$CYGWIN" == "xtrue" ] ; then
 fi
 
 if [ "x$JAVA_HOME" == "x" ] ; then 
-  JAVA_HOME="$(dirname $(dirname $(readlink -f $(which javac))))"
+  JAVA_HOME="$(dirname $(dirname $(readlink $READLINK_F $(which javac))))"
 fi
 
 if [ "x$CYGWIN" == "xtrue" ] ; then
@@ -149,7 +151,7 @@ tar -czf test.${TIME}.tar.gz "${jtWork}" "${jtReport}" || echo "Packing of resul
 
 popd
 
-if [ ! `readlink -f ${SCRIPT_DIR}` == `pwd`  ] ; then
+if [ ! `readlink $READLINK_F ${SCRIPT_DIR}` == `pwd`  ] ; then
     mv ${SCRIPT_DIR}/test.${TIME} .
     mv -v  ${SCRIPT_DIR}/test.${TIME}.tar.gz . || echo "Moving of results tarball failed"
 fi
