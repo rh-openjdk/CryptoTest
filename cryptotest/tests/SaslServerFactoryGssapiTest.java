@@ -25,7 +25,7 @@
 /*
  * @test
  * @modules java.base/java.security:open
- * @bug 1422738
+ * @bug 1422738 1066099
  * @library /
  * @build cryptotest.tests.SaslServerFactoryTests
  *        cryptotest.Settings
@@ -36,7 +36,7 @@
  *        cryptotest.utils.Misc
  *        cryptotest.utils.TestResult
  *        cryptotest.utils.SaslServerFactoryBase
- * @run main/othervm cryptotest.tests.SaslServerFactoryTests
+ * @run main/othervm cryptotest.tests.SaslServerFactoryGssapiTest
  */
 
 package cryptotest.tests;
@@ -59,10 +59,10 @@ import javax.security.sasl.Sasl;
 import javax.security.sasl.SaslException;
 import javax.security.sasl.SaslServer;
 
-public class SaslServerFactoryTests extends SaslServerFactoryBase {
+public class SaslServerFactoryGssapiTest extends SaslServerFactoryBase {
 
     public static void main(String[] args) {
-        TestResult r = new SaslServerFactoryTests().mainLoop();
+        TestResult r = new SaslServerFactoryGssapiTest().mainLoop();
         System.out.println(r.getExplanation());
         System.out.println(r.toString());
         r.assertItself();
@@ -76,22 +76,50 @@ public class SaslServerFactoryTests extends SaslServerFactoryBase {
         try {
             setSaslProps();
             final Map<String, Object> props = new HashMap<>();
-            if (!alias.equals("GSSAPI")) {
-                SaslServer server = Sasl.createSaslServer(alias,
-                        "ldap", "user1", props, Misc.getNamePasswdRealmHandler());
-                if (server != null) {
-                    printResult("Mechanism is '" + server.getMechanismName()
-                            + "' and authentication is " + (server.isComplete() ? "" : "NOT ")
-                            + "complete");
-                } else {
-                    throw new AlgorithmRunException(new RuntimeException(
-                            String.format("server null, provider '%s' and alias '%s'", service.getAlgorithm(), alias)));
+            if (alias.equals("GSSAPI")) {
+                Misc.checkAgentConfig();
+                if (debug) {
+                    System.setProperty("sun.security.jgss.debug", "true");
+                    System.setProperty("sun.security.krb5.debug", "true");
+                    System.setProperty("java.security.debug", "logincontext,policy,scl,gssloginconfig");
                 }
+                final LoginContext lc = new LoginContext("user1", new Subject(), Misc.getNamePasswdRealmHandler(), Misc.getKrb5Configuration());
+                lc.login();
+                final Subject subject = lc.getSubject();
+                Subject.doAs(subject, new PrivilegedSubjectAction(alias, props));
             } else {
-               throw new AlgorithmIgnoredException();
+              throw new AlgorithmIgnoredException();
             }
-        } catch (SaslException ex) {
+        } catch (LoginException ex) {
             throw new AlgorithmInstantiationException(ex);
+        }
+    }
+
+    private class PrivilegedSubjectAction implements PrivilegedAction<Void> {
+
+        private final String alias;
+        private final Map<String, ?> props;
+
+        public PrivilegedSubjectAction(String alias, Map<String, ?> props) {
+            this.alias = alias;
+            this.props = props;
+        }
+
+        @Override
+        public Void run() {
+            try {
+                SaslServer server = Sasl.createSaslServer(alias,
+                        "ldap", "JCKTEST", props, Misc.getNamePasswdRealmHandler());
+                if (server == null) {
+                    throw new RuntimeException("SaslServer is null");
+                } else {
+                    printResult("SaslServer has been successfully created.");
+                }
+
+            } catch (SaslException ex) {
+                throw new RuntimeException(ex);
+            }
+            return null;
         }
     }
 }

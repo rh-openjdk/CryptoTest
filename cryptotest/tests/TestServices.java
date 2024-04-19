@@ -76,7 +76,6 @@ import java.util.Set;
  *        cryptotest.tests.MessageDigestTests
  *        cryptotest.tests.PolicyTests
  *        cryptotest.tests.SaslClientFactoryTests
- *        cryptotest.tests.SaslServerFactoryTests
  *        cryptotest.tests.SecretKeyFactoryTests
  *        cryptotest.tests.SecureRandomTests
  *        cryptotest.tests.SignatureTests

@@ -74,7 +74,9 @@ import java.util.List;
  *        cryptotest.tests.MessageDigestTests
  *        cryptotest.tests.PolicyTests
  *        cryptotest.tests.SaslClientFactoryTests
+ *        cryptotest.tests.SaslServerFactoryBase
  *        cryptotest.tests.SaslServerFactoryTests
+ *        cryptotest.tests.SaslServerFactoryGssapiTest
  *        cryptotest.tests.SecretKeyFactoryTests
  *        cryptotest.tests.SecureRandomTests
  *        cryptotest.tests.SignatureTests
