@@ -71,6 +71,16 @@ public class SaslServerFactoryTests extends SaslServerFactoryBase {
     private final boolean debug = false;
 
     @Override
+    public String getAlgorithmExcludeList() {
+      return "GSSAPI";
+    }
+
+    @Override
+    public String getAlgorithmAllowList() {
+      return null;
+    }
+
+    @Override
     protected void checkAlgorithm(Provider.Service service, final String alias)
             throws AlgorithmInstantiationException, AlgorithmRunException {
         try {
