@@ -121,7 +121,7 @@ if [ ! -e "$JTREG_HOME" ] ; then
 fi
 
 AGENT_OPT=""
-if [ -n "${SKIP_AGENT_TESTS:-}" ] ; then
+if [ ! "${SKIP_AGENT_TESTS:-}" = "false" ] && [ -n "${SKIP_AGENT_TESTS:-}" ] ; then
   AGENT_OPT="-javaoption:-Dcryptotests.skipAgentTests=1"
 else
   if [ -n "${AGENT_HOSTNAME:-}" ] ; then
