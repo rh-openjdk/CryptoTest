@@ -47,6 +47,13 @@ public abstract class AlgorithmTest {
         return this.getClass().getSimpleName().substring(0, this.getClass().getSimpleName().indexOf("Tests"));
     }
 
+    public String getAlgorithmExcludeList() {
+      return null;
+    }
+    public String getAlgorithmAllowList() {
+      return null;
+    }
+
     protected abstract void checkAlgorithm(Provider.Service service, String alias) throws AlgorithmInstantiationException, AlgorithmRunException;
 
     private String generateTitle(Provider provider, Provider.Service service, String alias) {
@@ -74,6 +81,16 @@ public abstract class AlgorithmTest {
                     String title = generateTitle(provider, service, alias);
                     try {
                         if (service.getType().equals(getTestedPart())) {
+                            if (getAlgorithmExcludeList() != null) {
+                                if (alias.matches(getAlgorithmExcludeList())) {
+                                    continue;
+                                }
+                            }
+                            if (getAlgorithmAllowList() != null) {
+                                if (!alias.matches(getAlgorithmAllowList())) {
+                                    continue;
+                                }
+                            }
                             System.out.println(title);
                             testsCount++;
                             checkAlgorithm(service, alias);

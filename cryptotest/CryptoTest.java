@@ -146,9 +146,9 @@ public class CryptoTest {
             }
         }
         if (maxSeen != minSeen) {
-            results.add(new TestResult("Number of checked services changed during test run", TestResult.State.FAILED, ConstantServices.class, 1, 1));
+            results.add(new TestResult("Number of checked services changed during test run " + maxSeen + "/" + minSeen, TestResult.State.FAILED, ConstantServices.class, 1, 1));
         } else {
-            results.add(new TestResult("Number of checked services changed during test run", TestResult.State.PASSED, ConstantServices.class, 1, 0));
+            results.add(new TestResult("Number of checked services changed during test run " + maxSeen, TestResult.State.PASSED, ConstantServices.class, 1, 0));
         }
         System.out.println(results.get(results.size() - 1).getExplanation());
         System.out.println(results.get(results.size() - 1).toString());
