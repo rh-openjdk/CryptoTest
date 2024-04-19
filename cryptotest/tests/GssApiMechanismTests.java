@@ -28,7 +28,7 @@
  *          java.security.jgss/sun.security.jgss
  *          java.security.jgss/sun.security.jgss.krb5
  *          java.security.jgss/sun.security.krb5
- * @bug 1022017
+ * @bug 1022017 1066099
  * @library /
  * @build cryptotest.tests.GssApiMechanismTests
  *        cryptotest.Settings

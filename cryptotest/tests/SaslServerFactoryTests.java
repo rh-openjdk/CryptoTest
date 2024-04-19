@@ -25,7 +25,7 @@
 /*
  * @test
  * @modules java.base/java.security:open
- * @bug 1422738
+ * @bug 1422738 1066099
  * @library /
  * @build cryptotest.tests.SaslServerFactoryTests
  *        cryptotest.Settings

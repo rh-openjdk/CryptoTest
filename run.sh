@@ -122,7 +122,18 @@ fi
 
 AGENT_OPT=""
 if [ -n "${SKIP_AGENT_TESTS:-}" ] ; then
-    AGENT_OPT="-javaoption:-Dcryptotests.skipAgentTests=1"
+  AGENT_OPT="-javaoption:-Dcryptotests.skipAgentTests=1"
+else
+  if [ -n "${AGENT_HOSTNAME:-}" ] ; then
+    AGENT_OPT="-javaoption:-Dcryptotests.agentHostName=$AGENT_HOSTNAME"
+  else
+    echo "You have not set SKIP_AGENT_TESTS and you have empty AGENT_HOSTNAME"
+    echo "set SKIP_AGENT_TESTS to false or 1 to skip kdc requiring tests, or.. better"
+    echo "set AGENT_HOSTNAME to host, where the kerberos server resides, to run also all SaslServerFactoryTests and GssApiMechanismTests"
+    echo "The automated creation of this server is limited, and work in progress"
+    exit 1
+  fi
+
 fi
 
 echo Running with $JAVA...
