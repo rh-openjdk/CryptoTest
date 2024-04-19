@@ -38,6 +38,7 @@
  *        cryptotest.utils.AlgorithmTest
  *        cryptotest.utils.Misc
  *        cryptotest.utils.TestResult
+ * @requires cryptotests.krb.kdc.enabled == "true"
  * @run main/othervm cryptotest.tests.GssApiMechanismTests
  */
 

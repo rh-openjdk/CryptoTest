@@ -36,6 +36,7 @@
  *        cryptotest.utils.Misc
  *        cryptotest.utils.TestResult
  *        cryptotest.utils.SaslServerFactoryBase
+ * @requires cryptotests.krb.kdc.enabled == "true"
  * @run main/othervm cryptotest.tests.SaslServerFactoryGssapiTest
  */
 
