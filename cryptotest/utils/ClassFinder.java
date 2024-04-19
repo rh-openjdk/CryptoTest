@@ -46,11 +46,12 @@ public class ClassFinder {
 
     static public List<Class<? extends AlgorithmTest>> findAllAlgorithmTest() {
         List<Class<? extends AlgorithmTest>> r = ClassFinder.findAllMatchingTypes(AlgorithmTest.class);
-        for (Class<? extends AlgorithmTest> test : r) {
-            if (test.getName().equals("cryptotest.utils.AlgorithmTest")) {
+        for (int i=0 ; i<r.size() ; i++) {
+            Class<? extends AlgorithmTest> test=r.get(i);
+            if (   test.getName().equals("cryptotest.utils.AlgorithmTest")
+                || test.getName().equals("cryptotest.tests.SaslServerFactoryBase")) {
                 r.remove(test);
-                //only one to do
-                return r;
+                i--;
             }
         }
         return r;
