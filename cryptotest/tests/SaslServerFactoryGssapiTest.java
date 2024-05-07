@@ -37,7 +37,12 @@
  *        cryptotest.utils.TestResult
  *        cryptotest.utils.SaslServerFactoryBase
  * @requires cryptotests.krb.kdc.enabled == "true"
- * @run main/othervm cryptotest.tests.SaslServerFactoryGssapiTest
+ * @run main/othervm
+ *          -Djava.net.preferIPv4Stack=true
+ *          -Dsun.security.krb5.debug=true
+ *          -Dsun.security.jgss.debug=true
+ *          -Djava.security.debug=logincontext,policy,scl,gssloginconfig
+ *          cryptotest.tests.SaslServerFactoryGssapiTest
  */
 
 package cryptotest.tests;

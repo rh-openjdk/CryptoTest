@@ -39,7 +39,12 @@
  *        cryptotest.utils.Misc
  *        cryptotest.utils.TestResult
  * @requires cryptotests.krb.kdc.enabled == "true"
- * @run main/othervm cryptotest.tests.GssApiMechanismTests
+ * @run main/othervm
+ *          -Djava.net.preferIPv4Stack=true
+ *          -Dsun.security.krb5.debug=true
+ *          -Dsun.security.jgss.debug=true
+ *          -Djava.security.debug=logincontext,policy,scl,gssloginconfig
+ *           cryptotest.tests.GssApiMechanismTests
  */
 
 package cryptotest.tests;
