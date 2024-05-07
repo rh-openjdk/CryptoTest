@@ -54,13 +54,10 @@ jobs:
       fail-fast: false
       matrix:
         jdkconf:
-          - JDK 8
           - JDK 11
           - JDK 17
           - JDK 21
         include:
-          - jdkconf: JDK 8
-            jdkver: "8"
           - jdkconf: JDK 11
             jdkver: "11"
           - jdkconf: JDK 17
