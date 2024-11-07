@@ -111,11 +111,11 @@ echo "treating jdk as: $JDK_MAJOR"
 
 if [ ! -e "$JTREG_HOME" ] ; then
   if [ "0$JDK_MAJOR" -le "8" ] ; then
-    ball=jtreg-6+1-jtrfix.tar.gz
-    curl -L -o "$ball" "https://github.com/andrlos/jtreg/releases/download/6.1-jtrfix-V01.0/$ball"
+    ball=jtreg-6+2-jtrfix.tar.gz
+    curl -L -o "$ball" "https://github.com/andrlos/jtreg/releases/download/6.2-jtrfix-V01.0/$ball"
   else
-    ball=jtreg-7.3.1+1-jtrfix.tar.gz
-    curl -L -o "$ball" "https://github.com/andrlos/jtreg/releases/download/7.3.1%2B1-jtrfix-V01.0/$ball"
+    ball=jtreg-7.3.1+2-jtrfix.tar.gz
+    curl -L -o "$ball" "https://github.com/andrlos/jtreg/releases/download/7.3.1%2B2-jtrfix-V01.0/$ball"
   fi
   tar -xf $ball
 fi
