@@ -123,38 +123,14 @@ public class KeyFactoryTests extends AlgorithmTest {
                     privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), RSAPrivateKeySpec.class);
                     publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), RSAPublicKeySpec.class);
                 }
-            } else if (service.getAlgorithm().contains("X25519")) {
-                KeyPairGenerator kpg = KeysNaiveGenerator.getKeyPairGenerator("X25519", p);
-                KeyPair kp = kpg.generateKeyPair();
-                translated = keyFactory.translateKey(kp.getPublic());
-                if (!pkcs11fips) {
-                    // pkcs11 provider in FIPS mode cannot obtain RAW keys
-                    privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), PKCS8EncodedKeySpec.class);
-                    publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), X509EncodedKeySpec.class);
-                }
-            } else if (service.getAlgorithm().contains("X448")) {
-                KeyPairGenerator kpg = KeysNaiveGenerator.getKeyPairGenerator("X448", p);
-                KeyPair kp = kpg.generateKeyPair();
-                translated = keyFactory.translateKey(kp.getPublic());
-                if (!pkcs11fips) {
-                    // pkcs11 provider in FIPS mode cannot obtain RAW keys
-                    privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), PKCS8EncodedKeySpec.class);
-                    publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), X509EncodedKeySpec.class);
-                }
-            } else if (service.getAlgorithm().contains("XDH")) {
-                KeyPairGenerator kpg = KeysNaiveGenerator.getKeyPairGenerator("XDH", p);
-                KeyPair kp = kpg.generateKeyPair();
-                translated = keyFactory.translateKey(kp.getPublic());
-                if (!pkcs11fips) {
-                    // pkcs11 provider in FIPS mode cannot obtain RAW keys
-                    privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), PKCS8EncodedKeySpec.class);
-                    publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), X509EncodedKeySpec.class);
-                }
-            } else if (service.getAlgorithm().startsWith("ML-")) {
+            } else if (service.getAlgorithm().contains("X25519")
+                || service.getAlgorithm().contains("X448")
+                || service.getAlgorithm().contains("XDH")
+                || service.getAlgorithm().startsWith("ML-")) {
                 KeyPairGenerator kpg = KeysNaiveGenerator.getKeyPairGenerator(service.getAlgorithm(), p);
                 KeyPair kp = kpg.generateKeyPair();
                 translated = keyFactory.translateKey(kp.getPublic());
-		if (!pkcs11fips) {
+                if (!pkcs11fips) {
                     // pkcs11 provider in FIPS mode cannot obtain RAW keys
                     privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), PKCS8EncodedKeySpec.class);
                     publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), X509EncodedKeySpec.class);
