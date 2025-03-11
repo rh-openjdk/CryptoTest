@@ -62,6 +62,7 @@ import java.util.List;
  *        cryptotest.tests.CipherTests
  *        cryptotest.tests.ConfigurationTests
  *        cryptotest.tests.GssApiMechanismTests
+ *        cryptotest.tests.KDFTests
  *        cryptotest.tests.KEMTests
  *        cryptotest.tests.KeyAgreementTests
  *        cryptotest.tests.KeyFactoryTests
