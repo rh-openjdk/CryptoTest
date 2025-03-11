@@ -80,6 +80,14 @@ public class KeyPairGeneratorTests extends AlgorithmTest {
                 keySize = 2048;
             } else if (service.getAlgorithm().contains("RSA")) {
                 keySize = 2048;
+            } else if (service.getAlgorithm().contains("ML-")) {
+                // keySize is intentionally -1 here, KPG of this provider [1]
+                // does not override default initialize method [2],
+                // internal (in-tree) tests do the same [3], see:
+                // [1] https://github.com/openjdk/jdk/blob/da2b4f0749dffc99fa42c7311fbc74231af273bd/src/java.base/share/classes/com/sun/crypto/provider/ML_KEM_Impls.java#L40
+                // [2] https://github.com/openjdk/jdk/blob/da2b4f0749dffc99fa42c7311fbc74231af273bd/src/java.base/share/classes/sun/security/provider/NamedKeyPairGenerator.java#L153
+                // [3] https://github.com/openjdk/jdk/blob/da2b4f0749dffc99fa42c7311fbc74231af273bd/test/jdk/sun/security/provider/all/Deterministic.java#L208
+                keySize = -1;
             }
             keyPairGenerator.initialize(keySize, random);
             KeyPair pair = keyPairGenerator.genKeyPair();

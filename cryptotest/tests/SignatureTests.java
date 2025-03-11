@@ -99,7 +99,7 @@ public class SignatureTests extends AlgorithmTest {
                     }
                 }
                 key = getEcPrivateKey(service.getProvider());
-            } else if (service.getAlgorithm().equals("Ed25519") || service.getAlgorithm().equals("EdDSA") || service.getAlgorithm().equals("Ed448")) {
+            } else if (service.getAlgorithm().equals("Ed25519") || service.getAlgorithm().equals("EdDSA") || service.getAlgorithm().equals("Ed448") || service.getAlgorithm().startsWith("ML-")) {
                 KeyPairGenerator kpg = KeyPairGenerator.getInstance(service.getAlgorithm(), service.getProvider());
                 KeyPair kp = kpg.generateKeyPair();
                 key = kp.getPrivate();
