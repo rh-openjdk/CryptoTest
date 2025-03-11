@@ -106,7 +106,7 @@ public class KeyFactoryTests extends AlgorithmTest {
                     privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), privateKeyClass);
                     publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), publicKeyClass);
                 }
-            } else if (service.getAlgorithm().contains("DSA")) {
+            } else if (service.getAlgorithm().contains("DSA") && !service.getAlgorithm().startsWith("ML-")) {
                 KeyPair kp = KeysNaiveGenerator.getDsaKeyPair(p);
                 translated = keyFactory.translateKey(kp.getPublic());
                 if (!pkcs11fips) {
@@ -146,6 +146,15 @@ public class KeyFactoryTests extends AlgorithmTest {
                 KeyPair kp = kpg.generateKeyPair();
                 translated = keyFactory.translateKey(kp.getPublic());
                 if (!pkcs11fips) {
+                    // pkcs11 provider in FIPS mode cannot obtain RAW keys
+                    privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), PKCS8EncodedKeySpec.class);
+                    publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), X509EncodedKeySpec.class);
+                }
+            } else if (service.getAlgorithm().startsWith("ML-")) {
+                KeyPairGenerator kpg = KeysNaiveGenerator.getKeyPairGenerator(service.getAlgorithm(), p);
+                KeyPair kp = kpg.generateKeyPair();
+                translated = keyFactory.translateKey(kp.getPublic());
+		if (!pkcs11fips) {
                     // pkcs11 provider in FIPS mode cannot obtain RAW keys
                     privateKeySpec = keyFactory.getKeySpec(kp.getPrivate(), PKCS8EncodedKeySpec.class);
                     publicKeySpec = keyFactory.getKeySpec(kp.getPublic(), X509EncodedKeySpec.class);

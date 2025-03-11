@@ -114,6 +114,8 @@ public class KEMTests extends AlgorithmTest {
             KeyPairGenerator kpg = null;
             if (service.getAlgorithm().equals("DHKEM")) {
                 kpg = KeysNaiveGenerator.getKeyPairGenerator("X25519", service.getProvider());
+            } else if (service.getAlgorithm().startsWith("ML-")) {
+                kpg = KeysNaiveGenerator.getKeyPairGenerator(service.getAlgorithm(), service.getProvider());
             } else {
                 throw new RuntimeException("Unsupported KEM algorithm: " + service.getAlgorithm());
             }
