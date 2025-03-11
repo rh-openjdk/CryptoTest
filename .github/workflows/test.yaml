@@ -31,7 +31,7 @@ jobs:
           - jdkconf: JDK 21
             jdkver: "21"
           - jdkconf: JDK Latest
-            jdkver: "21"
+            jdkver: "23"
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK
