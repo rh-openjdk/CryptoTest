@@ -89,22 +89,22 @@ public class KEMTests extends AlgorithmTest {
         return m.invoke(e);
     }
 
-    public static Object encapsulated_encapsulation(Object e) throws Exception {
+    public static byte[] encapsulated_encapsulation(Object e) throws Exception {
         Class c = Class.forName("javax.crypto.KEM$Encapsulated");
         Method m = c.getDeclaredMethod("encapsulation");
-        return m.invoke(e);
+        return (byte[]) m.invoke(e);
     }
 
-    public static Object encapsulated_key(Object e) throws Exception {
+    public static SecretKey encapsulated_key(Object e) throws Exception {
         Class c = Class.forName("javax.crypto.KEM$Encapsulated");
         Method m = c.getDeclaredMethod("key");
-        return m.invoke(e);
+        return (SecretKey) m.invoke(e);
     }
 
-    public static Object decapsulator_decapsulate(Object d, Object o) throws Exception {
+    public static SecretKey decapsulator_decapsulate(Object d, Object o) throws Exception {
         Class c = Class.forName("javax.crypto.KEM$Decapsulator");
         Method m = c.getDeclaredMethod("decapsulate", byte[].class);
-        return m.invoke(d, o);
+        return (SecretKey) m.invoke(d, o);
     }
 
     @Override
@@ -122,15 +122,35 @@ public class KEMTests extends AlgorithmTest {
             KeyPair kp = kpg.generateKeyPair();
             Object sender = kem_newEncapsulator(kem, kp.getPublic());
             Object encapsulated = encapsulator_encapsulate(sender);
-            Object encapsulation = encapsulated_encapsulation(encapsulated);
-            SecretKey k1 = (SecretKey) encapsulated_key(encapsulated);
+            byte[] encapsulation = encapsulated_encapsulation(encapsulated);
+            SecretKey k1 = encapsulated_key(encapsulated);
 
             Object receiver = kem_newDecapsulator(kem, kp.getPrivate());
-            SecretKey k2 = (SecretKey) decapsulator_decapsulate(receiver, encapsulation);
+            SecretKey k2 = decapsulator_decapsulate(receiver, encapsulation);
 
             if (!Arrays.equals(k1.getEncoded(), k2.getEncoded())) {
                 throw new Exception("Keys are not equal");
             }
+
+            /*
+            Code above uses reflection, so that it is buildable on all jdks,
+            It is equivalent to following code:
+
+            KEM kem = KEM.getInstance(alias, service.getProvider());
+            KeyPairGenerator kpg = null;
+            ... per algorithm key generator selection here ...
+            KeyPair kp = kpg.generateKeyPair();
+            KEM.Encapsulator sender = kem.newEncapsulator(kp.getPublic());
+            KEM.Encapsulated encapsulated = sender.encapsulate();
+            byte[] encapsulation = encapsulated.encapsulation();
+            SecretKey k1 = encapsulated.key();
+            KEM.Decapsulator receiver = kem.newDecapsulator(kp.getPrivate());
+            SecretKey k2 = receiver.decapsulate(encapsulation);
+            if (!Arrays.equals(k1.getEncoded(), k2.getEncoded())) {
+                throw new Exception("Keys are not equal");
+            }
+
+            */
         } catch (AlgorithmIgnoredException aie) {
             throw aie;
         } catch (NoSuchAlgorithmException ex) {
