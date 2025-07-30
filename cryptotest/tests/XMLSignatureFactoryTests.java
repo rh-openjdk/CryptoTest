@@ -100,10 +100,10 @@ public class XMLSignatureFactoryTests extends AlgorithmTest {
                 Collections.singletonList(factory.newTransform(Transform.ENVELOPED, (TransformParameterSpec)null)), null, null);
             
             SignedInfo si = factory.newSignedInfo(factory.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS, (XMLSignature)null), 
-            factory.newSignatureMethod(SignatureMethod.DSA_SHA1, null), Collections.singletonList(ref));
+            factory.newSignatureMethod(SignatureMethod.RSA_SHA1, null), Collections.singletonList(ref));
             
-            KeyPairGenerator kpg = KeyPairGenerator.getInstance("DSA");
-            kpg.initialize(512);
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(1024);
             KeyPair kp = kpg.generateKeyPair();
             
             KeyInfoFactory kif = factory.getKeyInfoFactory();
