@@ -51,6 +51,7 @@ import cryptotest.utils.TestResult;
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.security.*;
 import java.security.spec.AlgorithmParameterSpec;
@@ -120,6 +121,15 @@ public class CipherTests extends AlgorithmTest {
                 initSpec = (AlgorithmParameterSpec) chachaConstr.newInstance(b, 10);
                 kg.init(256);
                 key = KeyGenerator.getInstance("ChaCha20").generateKey();
+            } else if (service.getAlgorithm().contains("HPKE")) {
+                Class<?> hpkeCls = Class.forName("javax.crypto.spec.HPKEParameterSpec");
+                Method hpkeM = hpkeCls.getDeclaredMethod("of", int.class, int.class, int.class);
+                int hpkeP1 = (Integer) hpkeCls.getDeclaredField("KEM_DHKEM_X25519_HKDF_SHA256").get(null);
+                int hpkeP2 = (Integer) hpkeCls.getDeclaredField("KDF_HKDF_SHA256").get(null);
+                int hpkeP3 = (Integer) hpkeCls.getDeclaredField("AEAD_AES_256_GCM").get(null);
+                // based on: https://github.com/openjdk/jdk/blob/45a2fd37f0ebda35789006b4e607422f7c369017/test/jdk/com/sun/crypto/provider/Cipher/HPKE/Compliance.java#L65
+                initSpec = (AlgorithmParameterSpec) hpkeM.invoke(null, hpkeP1, hpkeP2, hpkeP3);
+                key = KeyPairGenerator.getInstance("X25519").generateKeyPair().getPublic();
             }
             if (initSpec != null){
                 c.init(Cipher.ENCRYPT_MODE, key, initSpec);
@@ -133,7 +143,7 @@ public class CipherTests extends AlgorithmTest {
                 c.init(Cipher.ENCRYPT_MODE, key);
                 AlgorithmTest.printResult(c.doFinal(b));
             }
-        } catch(NoSuchAlgorithmException | ClassNotFoundException | NoSuchMethodException | NoSuchPaddingException | InvalidKeySpecException | InvalidAlgorithmParameterException | InstantiationException | IllegalAccessException | InvocationTargetException | NullPointerException ex){
+        } catch(NoSuchAlgorithmException | ClassNotFoundException | NoSuchMethodException | NoSuchFieldException | NoSuchPaddingException | InvalidKeySpecException | InvalidAlgorithmParameterException | InstantiationException | IllegalAccessException | InvocationTargetException | NullPointerException ex){
             throw new AlgorithmInstantiationException(ex);
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidKeyException |
                 UnsupportedOperationException | InvalidParameterException | ProviderException ex) {
