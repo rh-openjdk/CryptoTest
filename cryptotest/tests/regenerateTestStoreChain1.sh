@@ -31,7 +31,7 @@ PSKS="$KS $PS"
 ca=companythatdoesnotexist
 chain1=intermediatecompanycertificate
 chain2=thirdcompany
-validity="-validity 2000"
+validity="-validity 36500"
 alg="-keyalg RSA"
 
 # clena legacy and new
